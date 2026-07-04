@@ -76,7 +76,9 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 ## Usage
 
 ```bash
-./setuplabwc.sh     # install everything
+# Clone to /opt so all users can use it, then run the setup
+sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/dotfiles
+/opt/dotfiles/setuplabwc.sh
 ```
 
 Run `n` instead of `nnn` to auto-cd to last directory on quit.
