@@ -51,6 +51,7 @@ sudo apt install -y \
   vim \
   tmux \
   fastfetch \
+  ntfs-3g \
   pipewire \
   pipewire-pulse \
   libspa-0.2-bluetooth \
