@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=tmux
+Comment=Terminal multiplexer
+Exec=footclient -e tmux new-session -A -D -s wofi
+Icon=utilities-terminal
+Type=Application
+Categories=System;TerminalEmulator;
+NoDisplay=false

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Resolution
+Comment=Change display resolution
+Exec=footclient -e resolution
+Icon=preferences-desktop-display
+Type=Application
+Categories=System;Settings;
+NoDisplay=false

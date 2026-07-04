@@ -1,0 +1,58 @@
+#!/bin/bash
+set -e
+
+if ! command -v wlr-randr &>/dev/null; then
+    notify-send -u critical "wlr-randr not installed"
+    exit 1
+fi
+
+list=$(wlr-randr 2>/dev/null)
+[ -z "$list" ] && { notify-send "wlr-randr returned no data"; exit 1; }
+
+entries=""
+current_output=""
+current_mode=""
+while IFS= read -r line; do
+    if echo "$line" | grep -q "^[^[:space:]]"; then
+        current_output=$(echo "$line" | awk '{print $1}')
+    elif echo "$line" | grep -qE "^[[:space:]]+[0-9]+x[0-9]+"; then
+        res=$(echo "$line" | awk '{print $1}')
+        rate=$(echo "$line" | awk '{print $3}')
+        entries="$entries"$'\n'"[$current_output] $res @ ${rate}Hz"
+        if echo "$line" | grep -q "(current)"; then
+            current_mode="$res@${rate}"
+        fi
+    fi
+done <<< "$list"
+entries="${entries#"
+"}"
+
+[ -z "$entries" ] && { notify-send "No modes available"; exit 1; }
+
+selected=$(echo "$entries" | wofi --dmenu --prompt "Resolution" 2>/dev/null)
+[ -z "$selected" ] && exit 0
+
+output=$(echo "$selected" | sed 's/^\[\(.*\)\].*$/\1/')
+mode=$(echo "$selected" | awk '{print $2}')
+rate=$(echo "$selected" | awk '{print $3}' | tr -d 'Hz')
+
+wlr-randr --output "$output" --mode "${mode}@${rate}"
+
+revert() {
+    sleep 10
+    wlr-randr --output "$output" --mode "$current_mode" 2>/dev/null
+    notify-send -u critical "Reverted" "No confirmation received"
+}
+
+revert &
+revert_pid=$!
+
+confirm=$(echo -e "Yes\nRevert" | wofi --dmenu --prompt "Keep? (10s)" 2>/dev/null)
+kill "$revert_pid" 2>/dev/null
+
+if [ "$confirm" = "Yes" ]; then
+    notify-send "Display" "Set $output to ${mode}@${rate}"
+else
+    wlr-randr --output "$output" --mode "$current_mode" 2>/dev/null
+    notify-send "Display" "Reverted"
+fi

@@ -1,0 +1,61 @@
+/* Waybar styling */
+* {
+    border: none;
+    border-radius: 6px;
+    font-family: "JetBrainsMono Nerd Font", "FontAwesome", "Fira Code", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(30, 30, 30, 0.85);
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Module styling */
+#workspaces,
+#clock,
+#custom-stats,
+#custom-netspeed,
+#network,
+#pulseaudio,
+#bluetooth,
+#battery,
+#tray,
+#custom-weather,
+#custom-nightlight {
+    padding: 0 10px;
+    margin: 4px 2px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+/* Workspace/task buttons */
+#taskbar button {
+    padding: 0 8px;
+    background: transparent;
+    color: #888;
+    border-radius: 4px;
+}
+
+#taskbar button.active {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#taskbar button:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Colors for specific modules */
+#custom-stats { color: #81c784; }
+#custom-netspeed { color: #4dd0e1; }
+#network { color: #4dd0e1; }
+#pulseaudio { color: #ffb74d; }
+#bluetooth { color: #90caf9; }
+#battery { color: #aed581; }
+#clock { color: #e0e0e0; }
+#custom-weather { color: #90caf9; }
+#custom-nightlight.on { color: #ffab91; }
+#custom-nightlight.off { color: #78909c; }

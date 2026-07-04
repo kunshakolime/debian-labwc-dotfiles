@@ -1,0 +1,14 @@
+[General]
+prompt=Run:
+width=40%
+height=60%
+location=center
+show=drun
+allow_images=true
+insensitive=true
+hide_scroll=true
+no_actions=true
+gtk_dark=true
+
+[Style]
+font=JetBrainsMono Nerd Font 12

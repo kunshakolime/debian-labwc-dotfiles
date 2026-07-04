@@ -1,0 +1,36 @@
+#!/bin/bash
+
+step="${2:-5}"
+
+case "$1" in
+  up)
+    pamixer -i "$step"
+    ;;
+  down)
+    pamixer -d "$step"
+    ;;
+  mute)
+    pamixer -t
+    ;;
+  *)
+    echo "Usage: $0 {up|down|mute} [step%]"
+    exit 1
+    ;;
+esac
+
+volume="$(pamixer --get-volume)"
+muted="$(pamixer --get-mute)"
+
+if [ "$muted" = "true" ]; then
+  dunstify -h string:x-dunst-stack-tag:volume \
+    -a "volume" \
+    -u low \
+    "Muted"
+else
+  dunstify -h string:x-dunst-stack-tag:volume \
+    -h int:value:"$volume" \
+    -a "volume" \
+    -u low \
+    "Volume" \
+    "$volume%"
+fi

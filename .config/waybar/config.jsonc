@@ -1,0 +1,112 @@
+// Waybar configuration
+// Modules from left to right on the bar
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "margin-top": 6,
+    "margin-bottom": 0,
+    "margin-left": 6,
+    "margin-right": 6,
+    "spacing": 8,
+
+    "modules-left": ["wlr/taskbar"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/netspeed", "custom/stats", "network", "pulseaudio", "bluetooth", "custom/nightlight", "battery", "tray", "custom/weather"],
+
+    // --- Taskbar ---
+    "wlr/taskbar": {
+        "format": "{name}",
+        "icon": true,
+        "icon-theme": "Adwaita",
+        "all-outputs": false,
+        "on-click": "activate",
+        "on-click-middle": "close"
+    },
+
+    // --- Clock ---
+    "clock": {
+        "format": "{:%a %b %d  %H:%M}",
+        "tooltip-format": "{:%A, %B %d %Y  %I:%M %p}",
+        "interval": 60
+    },
+
+    // --- CPU + Memory ---
+    "custom/stats": {
+        "exec": "$HOME/.config/waybar/stats.sh",
+        "interval": 3,
+        "on-click": "footclient -e btop"
+    },
+
+    // --- Network speed ---
+    "custom/netspeed": {
+        "exec": "$HOME/.config/waybar/netspeed.sh",
+        "interval": 3,
+        "on-click": "footclient -e btop"
+    },
+
+    // --- Network ---
+    "network": {
+        "format-wifi": "  {essid} ({signalStrength}%)",
+        "format-ethernet": "  Connected",
+        "format-disconnected": "  Disconnected",
+        "tooltip-format-wifi": "IP: {ipaddr}",
+        "tooltip-format-ethernet": "IP: {ipaddr}",
+        "interval": 30,
+        "on-click": "footclient -e nmtui"
+    },
+
+    // --- Audio (PipeWire/PulseAudio) ---
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "  Muted",
+        "format-icons": {
+            "default": ["", ""]
+        },
+        "scroll-step": 5,
+        "on-click": "footclient -e pulsemixer",
+        "tooltip": false
+    },
+
+    // --- Bluetooth ---
+    "bluetooth": {
+        "format": " {status}",
+        "format-connected": " {device_alias}",
+        "format-device-preference": "headset",
+        "on-click": "footclient -e bluetui",
+        "tooltip-format": "Bluetooth: {status}\nConnected: {num_connections} device(s)"
+    },
+
+    // --- Battery (remove if desktop without battery) ---
+    "battery": {
+        "format": "{icon}  {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "format-charging": "  {capacity}%",
+        "format-full": "  Full",
+        "interval": 30
+    },
+
+    // --- System Tray ---
+    "tray": {
+        "icon-size": 18,
+        "spacing": 6
+    },
+
+    // --- Custom: Weather (uses wttr.in) ---
+    "custom/weather": {
+        "format": "{}",
+        "exec": "curl -s 'wttr.in?format=1' 2>/dev/null || echo ''",
+        "interval": 1800,
+        "tooltip": true,
+        "tooltip-format": "Weather",
+        "exec-if": "ping -c 1 -W 1 wttr.in >/dev/null 2>&1"
+    },
+
+    // --- Night Light ---
+    "custom/nightlight": {
+        "exec": "$HOME/.local/bin/nightlight status",
+        "interval": 10,
+        "on-click": "$HOME/.local/bin/nightlight toggle",
+        "return-type": "json"
+    }
+}

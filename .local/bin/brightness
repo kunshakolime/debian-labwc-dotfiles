@@ -1,0 +1,6 @@
+#!/bin/bash
+case "$1" in
+    up) brightnessctl set +2% ;;
+    down) brightnessctl set 2%- ;;
+    *) echo "usage: brightness {up|down}" ;;
+esac

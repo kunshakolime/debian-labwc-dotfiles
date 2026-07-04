@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# === What runs when labwc starts ===
+
+# foot --server — terminal daemon (makes footclient launches instant)
+foot --server &
+
+# swaybg — wallpaper
+swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
+
+# waybar — the top/bottom status bar
+waybar &
+
+# dunst — notification daemon (volume popups, battery alerts, etc.)
+dunst &
+
+# wlsunset — blue light filter at night (adjust lat/long for your location)
+wlsunset -l 52.5 -L 13.4 &
+
+# copyq — clipboard manager with history (runs in system tray)
+copyq --start-server &

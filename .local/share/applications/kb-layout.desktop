@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Keyboard Layout
+Comment=Switch keyboard layout
+Exec=kb-layout
+Icon=input-keyboard
+Type=Application
+Categories=System;Settings;
+NoDisplay=false

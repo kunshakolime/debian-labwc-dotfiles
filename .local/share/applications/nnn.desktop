@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=File Manager
+Comment=Browse files with nnn
+Exec=footclient nnn
+Icon=system-file-manager
+Type=Application
+Categories=System;FileManager;
+NoDisplay=false

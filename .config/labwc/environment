@@ -1,0 +1,11 @@
+# Keyboard layout — set to Spanish (Spain).
+# This runs before labwc starts, so your keys (ñ, accented vowels, etc.) work.
+# Change "es" to "latam" for Latin American Spanish, or "us" for US English.
+XKB_DEFAULT_LAYOUT=es
+
+# Cursor theme and size (optional — uncomment if you install a cursor theme)
+# XCURSOR_THEME=Adwaita
+# XCURSOR_SIZE=24
+
+# nnn — enable detail mode (sizes, dates)
+NNN_OPTS=d

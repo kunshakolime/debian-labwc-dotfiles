@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Resource Monitor
+Comment=System monitor (CPU, memory, processes)
+Exec=footclient -e btop
+Icon=utilities-system-monitor
+Type=Application
+Categories=System;Monitor;
+NoDisplay=false

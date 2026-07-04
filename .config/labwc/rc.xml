@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<labwc_config>
+  <core>
+    <gap>6</gap>
+  </core>
+
+  <!-- Keyboard bindings -->
+  <keyboard>
+    <default />
+
+    <!-- Launcher -->
+    <keybind key="W-Space">
+      <action name="Execute" command="wofi --show drun" />
+    </keybind>
+
+    <!-- Terminal -->
+    <keybind key="W-Return">
+      <action name="Execute" command="footclient" />
+    </keybind>
+
+
+    <!-- Close window -->
+    <keybind key="W-q">
+      <action name="Close" />
+    </keybind>
+
+    <!-- Window cycling -->
+    <keybind key="W-Tab">
+      <action name="NextWindow" />
+    </keybind>
+    <keybind key="W-S-Tab">
+      <action name="PreviousWindow" />
+    </keybind>
+
+    <!-- Screenshots -->
+    <keybind key="W-Print">
+      <action name="Execute" command="grim" />
+    </keybind>
+    <keybind key="W-S-Print">
+      <action name="Execute" command='grim -g \"$(slurp)\"' />
+    </keybind>
+
+    <!-- Volume control -->
+    <keybind key="W-Up">
+      <action name="Execute" command="volume up" />
+    </keybind>
+    <keybind key="W-Down">
+      <action name="Execute" command="volume down" />
+    </keybind>
+    <keybind key="W-m">
+      <action name="Execute" command="volume mute" />
+    </keybind>
+    <keybind key="XF86AudioRaiseVolume">
+      <action name="Execute" command="volume up" />
+    </keybind>
+    <keybind key="XF86AudioLowerVolume">
+      <action name="Execute" command="volume down" />
+    </keybind>
+    <keybind key="XF86AudioMute">
+      <action name="Execute" command="volume mute" />
+    </keybind>
+
+    <!-- Brightness (2% steps) -->
+    <keybind key="XF86MonBrightnessUp">
+      <action name="Execute" command="brightness up" />
+    </keybind>
+    <keybind key="XF86MonBrightnessDown">
+      <action name="Execute" command="brightness down" />
+    </keybind>
+
+    <!-- Media controls -->
+    <keybind key="XF86AudioPlay">
+      <action name="Execute" command="playerctl play-pause" />
+    </keybind>
+    <keybind key="XF86AudioNext">
+      <action name="Execute" command="playerctl next" />
+    </keybind>
+    <keybind key="XF86AudioPrev">
+      <action name="Execute" command="playerctl previous" />
+    </keybind>
+  </keyboard>
+
+  <!-- Window snapping/maximizing behavior -->
+  <windowSnapMaxRange>10</windowSnapMaxRange>
+
+  <!-- Theme -->
+  <theme>
+    <name>Numix</name>
+    <cornerRadius>6</cornerRadius>
+  </theme>
+</labwc_config>

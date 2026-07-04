@@ -1,0 +1,15 @@
+#!/bin/bash
+ENV_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/labwc/environment"
+layout=$(printf "us\nes\nara\nlatam\nde\nfr" | wofi --dmenu --prompt="Keyboard layout" --width=15% --height=30% --location=center)
+[ -z "$layout" ] && exit
+
+if grep -q "^XKB_DEFAULT_LAYOUT=" "$ENV_FILE" 2>/dev/null; then
+    sed -i "s/^XKB_DEFAULT_LAYOUT=.*/XKB_DEFAULT_LAYOUT=$layout/" "$ENV_FILE"
+else
+    echo "XKB_DEFAULT_LAYOUT=$layout" >> "$ENV_FILE"
+fi
+
+# Apply by restarting labwc
+labwc --reconfigure 2>/dev/null || labwc -r 2>/dev/null || {
+    notify-send "Keyboard Layout" "Set to $layout — restart labwc to apply"
+}
