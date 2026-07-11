@@ -52,7 +52,6 @@ sudo apt install -y \
   vim \
   tmux \
   fastfetch \
-  ntfs-3g \
   numix-gtk-theme \
   pipewire \
   pipewire-pulse \
