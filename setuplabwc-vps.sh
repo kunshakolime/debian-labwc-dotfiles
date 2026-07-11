@@ -116,12 +116,12 @@ cat > "$HOME/.config/wayvnc/config" <<EOF
 password-file=$HOME/.vnc/passwd
 EOF
 
-# ===== systemd services: wayvnc + noVNC (for manual restart if crashed) =====
-mkdir -p "$HOME/.config/systemd/user"
-cp "$SCRIPT_DIR/services/wayvnc.service" "$HOME/.config/systemd/user/"
-cp "$SCRIPT_DIR/services/novnc.service"  "$HOME/.config/systemd/user/"
-sudo loginctl enable-linger "$USER" 2>/dev/null || true
-systemctl --user daemon-reload
+# ===== systemd services: wayvnc + noVNC (always-on system services) =====
+cp "$SCRIPT_DIR/services/wayvnc.service" /etc/systemd/system/
+cp "$SCRIPT_DIR/services/novnc.service"  /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now wayvnc.service
+systemctl enable --now novnc.service
 
 # ===== Server-specific overrides =====
 
@@ -141,17 +141,6 @@ copyq --start-server &
 pulseaudio --start \
   --load="module-native-protocol-tcp auth-anonymous=1" \
   2>/dev/null &
-
-# VNC server (wayvnc) — needs labwc display to be running
-wayvnc 0.0.0.0 5900 2>/dev/null &
-
-# noVNC — browser-accessible VNC via WebSocket on port 6080
-NOVNC_DIR=""
-for d in /usr/share/novnc /usr/share/novnc/web /usr/share/websockify/novnc; do
-    [ -d "$d" ] && NOVNC_DIR="$d" && break
-done
-NOVNC_DIR="${NOVNC_DIR:-/usr/share/novnc}"
-websockify --web "$NOVNC_DIR" 6080 localhost:5900 2>/dev/null &
 AUTOSTART
 chmod +x "$HOME/.config/labwc/autostart"
 

@@ -1,9 +1,16 @@
 [Unit]
 Description=Wayland VNC server (wayvnc)
-After=graphical-session.target
+After=labwc.service graphical-session.target
+Wants=labwc.service
 
 [Service]
 Type=simple
+ExecStartPre=/bin/bash -c 'until [ -S \"$XDG_RUNTIME_DIR/wayland-1\" ]; do sleep 1; done'
 ExecStart=/usr/bin/wayvnc 0.0.0.0 5900
 Restart=on-failure
 RestartSec=3
+Environment=WAYLAND_DISPLAY=wayland-1
+Environment=XDG_RUNTIME_DIR=/run/user/0
+
+[Install]
+WantedBy=multi-user.target

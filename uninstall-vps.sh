@@ -5,11 +5,11 @@
 
 echo "Removing VPS services and autostart entries..."
 
-# --- Stop and disable systemd user services ---
+# --- Stop and disable systemd system services ---
 for svc in wayvnc.service novnc.service; do
-    systemctl --user stop "$svc" 2>/dev/null || true
-    systemctl --user disable "$svc" 2>/dev/null || true
-    rm -f "$HOME/.config/systemd/user/$svc"
+    systemctl stop "$svc" 2>/dev/null || true
+    systemctl disable "$svc" 2>/dev/null || true
+    rm -f "/etc/systemd/system/$svc"
 done
 
 # --- Remove wayvnc config and VNC password ---
@@ -37,7 +37,7 @@ AUTOSTART
 chmod +x "$HOME/.config/labwc/autostart"
 
 # --- Reload systemd ---
-systemctl --user daemon-reload
+systemctl daemon-reload
 
 echo ""
 echo "VPS setup removed."
