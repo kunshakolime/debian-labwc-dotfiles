@@ -108,20 +108,23 @@ cp "$SCRIPT_DIR/.local/bin/kb-layout"  "$HOME/.local/bin/"
 cp "$SCRIPT_DIR/.local/bin/resolution" "$HOME/.local/bin/"
 chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution"
 
-# ===== VNC password =====
-mkdir -p "$HOME/.vnc" "$HOME/.config/wayvnc"
-echo "$VNC_PASSWORD" > "$HOME/.vnc/passwd"
-chmod 600 "$HOME/.vnc/passwd"
-cat > "$HOME/.config/wayvnc/config" <<EOF
-password-file=$HOME/.vnc/passwd
+# ===== Headless environment (VPS has no display hardware) =====
+cat >> "$HOME/.config/labwc/environment" <<'EOF'
+WLR_BACKENDS=headless
+WLR_LIBINPUT_NO_DEVICES=1
+XCURSOR_SIZE=24
 EOF
 
-# ===== systemd services: wayvnc + noVNC (always-on system services) =====
-cp "$SCRIPT_DIR/services/wayvnc.service" /etc/systemd/system/
-cp "$SCRIPT_DIR/services/novnc.service"  /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable wayvnc.service novnc.service
-echo "VNC services enabled (will start on boot)."
+# ===== VNC password =====
+mkdir -p "$HOME/.vnc" "$HOME/.config/wayvnc"
+cat > "$HOME/.config/wayvnc/config" <<EOF
+address=0.0.0.0
+port=5900
+password=$VNC_PASSWORD
+EOF
+chmod 600 "$HOME/.config/wayvnc/config"
+
+# ===== No systemd services — wayvnc + noVNC launch from labwc autostart =====
 
 # ===== Server-specific overrides =====
 
@@ -136,6 +139,11 @@ swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill
 waybar &
 dunst &
 copyq --start-server &
+
+# VNC: wayvnc then noVNC websockify bridge
+wayvnc 0.0.0.0 5900 &
+sleep 1
+websockify --web /usr/share/novnc 6080 localhost:5900 &
 
 # Audio: start PulseAudio with TCP forwarding (for VNC client audio)
 pulseaudio --start \
