@@ -112,6 +112,8 @@ chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bi
 cat >> "$HOME/.config/labwc/environment" <<'EOF'
 WLR_BACKENDS=headless
 WLR_LIBINPUT_NO_DEVICES=1
+WLR_HEADLESS_WIDTH=800
+WLR_HEADLESS_HEIGHT=600
 XCURSOR_SIZE=24
 EOF
 
