@@ -1,12 +1,19 @@
 # dotfiles
 
-Labwc Wayland desktop config on Debian Trixie, managed with a setup script.
+Labwc Wayland desktop config on Debian Trixie, managed with setup scripts.
+
+Two install modes:
+- **Bare metal** (`setuplabwc.sh`) — full desktop with bluetooth, brightness, blue light filter
+- **VPS** (`setuplabwc-vps.sh`) — remote desktop via noVNC with audio forwarding, no hardware deps
 
 ## Contents
 
 | File/Dir | What it is |
 |---|---|
-| `setuplabwc.sh` | One-shot setup: installs packages, copies configs, sets up fonts |
+| `setuplabwc.sh` | Bare metal setup: installs packages, copies configs, sets up fonts |
+| `setuplabwc-vps.sh` | VPS setup: adds noVNC, sound, strips hardware deps. Takes VNC password as argument |
+| `uninstall-vps.sh` | Removes VPS services/autostart without removing packages |
+| `services/` | Systemd user service files for wayvnc and noVNC |
 | `bashrc` | Shell config with nnn quitcd wrapper (`n()` function) |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
 | `.config/waybar/` | Waybar status bar (clock, network, audio, bluetooth, battery, taskbar, weather, stats) |
@@ -17,11 +24,43 @@ Labwc Wayland desktop config on Debian Trixie, managed with a setup script.
 | `.config/gtk-4.0/` | GTK4 dark theme (Numix) |
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight) |
 
-## Packages
+## Bare metal install
+
+```bash
+sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
+/opt/labwc_dotfiles/setuplabwc.sh
+```
+
+### Packages (bare metal)
 
 labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
+
+## VPS install
+
+Sets up labwc with noVNC (browser-based VNC) and PulseAudio TCP for audio forwarding over VNC.
+
+```bash
+sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
+/opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
+```
+
+After setup, open `http://<vps-ip>:6080/vnc.html` in a browser and enter the password. Run `labwc` from a TTY to start the desktop.
+
+### Packages (VPS)
+
+Same as bare metal minus: wlsunset, bluez, libspa-0.2-bluetooth, brightnessctl, network-manager, wlr-randr
+
+Added: wayvnc, novnc, websockify, xwayland, xdg-desktop-portal-wlr
+
+### Uninstall VPS setup
+
+Removes VNC services, noVNC proxy, PulseAudio TCP, and restores default autostart. Does not remove packages.
+
+```bash
+/opt/labwc_dotfiles/uninstall-vps.sh
+```
 
 ## Keybinds
 
@@ -35,7 +74,7 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 | `Super` + `Up` / `Down` | Volume ±5% |
 | `Super` + `m` | Toggle mute |
 | Media keys | Playback control |
-| Brightness keys | Backlight ±2% |
+| Brightness keys | Backlight ±2% *(bare metal only)* |
 
 ## Waybar clicks
 
@@ -44,8 +83,15 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 | CPU/RAM stats | `btop` |
 | Network | `nmtui` |
 | Audio | `pulsemixer` |
-| Bluetooth | `bluetui` |
-| Display | Resolution picker (wofi + wlr-randr) |
+| Bluetooth | `bluetui` *(bare metal only)* |
+| Display | Resolution picker (wofi + wlr-randr) *(bare metal only)* |
+
+## Scripts
+
+- `brightness up` / `brightness down` — backlight ±2% *(bare metal only)*
+- `volume up` / `volume down` / `volume mute` — audio control
+- `kb-layout` — cycle keyboard layout
+- `resolution` — display resolution picker
 
 ## imv (image viewer)
 
@@ -66,19 +112,5 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 | `d` | Toggle info overlay |
 | `s` / `S` | Next scaling / upscaling mode |
 | `p` | Print to stdout |
-
-## Scripts
-
-- `brightness up` / `brightness down` — backlight ±2%
-- `volume up` / `volume down` / `volume mute` — audio control
-- `kb-layout` — cycle keyboard layout
-
-## Usage
-
-```bash
-# Clone to /opt so all users can use it, then run the setup
-sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
-/opt/labwc_dotfiles/setuplabwc.sh
-```
 
 Run `n` instead of `nnn` to auto-cd to last directory on quit.

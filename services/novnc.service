@@ -1,0 +1,10 @@
+[Unit]
+Description=noVNC WebSocket proxy (websockify)
+After=wayvnc.service graphical-session.target
+Requires=wayvnc.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/websockify --web /usr/share/novnc 6080 localhost:5900
+Restart=on-failure
+RestartSec=3

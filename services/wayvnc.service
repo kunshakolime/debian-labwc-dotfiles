@@ -1,0 +1,9 @@
+[Unit]
+Description=Wayland VNC server (wayvnc)
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/wayvnc 0.0.0.0 5900
+Restart=on-failure
+RestartSec=3
