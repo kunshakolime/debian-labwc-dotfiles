@@ -5,7 +5,7 @@ Wants=labwc.service
 
 [Service]
 Type=simple
-ExecStartPre=/bin/bash -c 'until [ -S \"$XDG_RUNTIME_DIR/wayland-1\" ]; do sleep 1; done'
+ExecStartPre=/bin/bash -c 'timeout 30 bash -c "until [ -S \"$XDG_RUNTIME_DIR/wayland-1\" ]; do sleep 1; done"'
 ExecStart=/usr/bin/wayvnc 0.0.0.0 5900
 Restart=on-failure
 RestartSec=3

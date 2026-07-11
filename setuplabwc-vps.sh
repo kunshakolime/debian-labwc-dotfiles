@@ -120,8 +120,8 @@ EOF
 cp "$SCRIPT_DIR/services/wayvnc.service" /etc/systemd/system/
 cp "$SCRIPT_DIR/services/novnc.service"  /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now wayvnc.service
-systemctl enable --now novnc.service
+systemctl enable wayvnc.service novnc.service
+echo "VNC services enabled (will start on boot)."
 
 # ===== Server-specific overrides =====
 
