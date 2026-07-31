@@ -4,7 +4,7 @@ Labwc Wayland desktop config on Debian Trixie, managed with setup scripts.
 
 Two install modes:
 - **Bare metal** (`setuplabwc.sh`) — full desktop with bluetooth, brightness, blue light filter
-- **VPS** (`setuplabwc-vps.sh`) — remote desktop via noVNC with audio forwarding, no hardware deps
+- **VPS** (`setuplabwc-vps.sh`) — remote desktop via noVNC, no hardware deps
 
 ## Contents
 
@@ -13,9 +13,7 @@ Two install modes:
 | `setuplabwc.sh` | Bare metal setup: installs packages, copies configs, sets up fonts |
 | `setuplabwc-vps.sh` | VPS setup: adds noVNC, sound, strips hardware deps. Takes VNC password as argument |
 | `build-wayvnc.sh` | Builds wayvnc >= 0.10 from source (for Trixie's old 0.9.1); no-op if not needed |
-| `uninstall-vps.sh` | Removes VPS services/autostart without removing packages |
-| `services/` | Systemd user service files for wayvnc and noVNC |
-| `bashrc` | Shell config with nnn quitcd wrapper (`n()` function) |
+| `uninstall-vps.sh` | Removes VPS setup (VNC, noVNC, headless env, autostart) without removing packages |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
 | `.config/waybar/` | Waybar status bar (clock, network, audio, bluetooth, battery, taskbar, weather, stats) |
 | `.config/wofi/` | App launcher config (dark, Nerd Font) |
@@ -40,7 +38,7 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 
 ## VPS install
 
-Sets up labwc with noVNC (browser-based VNC) and PulseAudio TCP for audio forwarding over VNC.
+Sets up labwc with noVNC (browser-based VNC). Note: VNC has no audio channel — sound plays from the machine's own output only (PipeWire stack starts from the labwc autostart).
 
 ```bash
 sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
@@ -67,7 +65,7 @@ Added: wayvnc, novnc, websockify, xwayland, xdg-desktop-portal-wlr
 
 ### Uninstall VPS setup
 
-Removes VNC services, noVNC proxy, PulseAudio TCP, and restores default autostart. Does not remove packages.
+Removes VNC, noVNC, headless env vars, and restores the default autostart. Does not remove packages.
 
 ```bash
 /opt/labwc_dotfiles/uninstall-vps.sh

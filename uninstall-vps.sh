@@ -1,6 +1,6 @@
 #!/bin/bash
 # Uninstall VPS-specific stuff: VNC processes, wayvnc config,
-# headless env vars, PulseAudio TCP, VNC password.
+# headless env vars, VNC password.
 # Does NOT remove any packages or shared configs.
 
 echo "Stopping VPS services..."
@@ -22,12 +22,7 @@ if [ -f "$ENV_FILE" ]; then
     sed -i '/^WLR_HEADLESS_HEIGHT=/d' "$ENV_FILE"
 fi
 
-# --- Unload PulseAudio TCP module (if PulseAudio is running) ---
-if command -v pactl &>/dev/null && pactl info &>/dev/null 2>&1; then
-    pactl unload-module module-native-protocol-tcp 2>/dev/null || true
-fi
-
-# --- Restore default autostart (no VNC, no PulseAudio TCP) ---
+# --- Restore default autostart (no VNC) ---
 cat > "$HOME/.config/labwc/autostart" <<'AUTOSTART'
 #!/bin/bash
 
@@ -46,7 +41,6 @@ echo "VPS setup removed."
 echo "  - wayvnc + websockify: killed"
 echo "  - wayvnc config + VNC password: deleted"
 echo "  - headless env vars: removed from labwc environment"
-echo "  - PulseAudio TCP module: unloaded"
 echo "  - autostart: restored to default (no VNC)"
 echo ""
 echo "Packages were NOT removed. Reboot or run 'labwc' to apply."
