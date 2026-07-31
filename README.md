@@ -47,9 +47,9 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 /opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
 ```
 
-After setup, open `https://<vps-ip>:6080/vnc.html` in a browser (accept the self-signed cert warning) and enter the VNC password. Run `labwc` from a TTY to start the desktop.
+After setup, open `http://<vps-ip>:6080/vnc.html` in a browser and enter the VNC password. Run `labwc` from a TTY to start the desktop.
 
-On wayvnc >= 0.10 (Forky, or a source build — see below) `allow_broken_crypto` enables classic VNC password auth, so noVNC shows a simple password prompt. Older wayvnc (Trixie's 0.9.1) falls back to AppleDH auth, which requires the HTTPS address above and also asks for the username `user`. The HTTPS endpoint always works either way.
+The patched wayvnc build (or Forky's 0.10.1 built by `build-wayvnc.sh`) offers classic VNC password auth first, so noVNC shows a simple password-only prompt over plain HTTP — no self-signed cert warning, no username.
 
 ### wayvnc from source (Debian Trixie)
 

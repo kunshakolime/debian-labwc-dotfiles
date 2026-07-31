@@ -154,18 +154,6 @@ password=$VNC_PASSWORD
 EOF
 chmod 600 "$HOME/.config/wayvnc/config"
 
-# ===== Self-signed cert for noVNC HTTPS =====
-# noVNC needs a secure context (HTTPS) for its AppleDH auth (crypto.subtle).
-# Generate a self-signed cert once; the browser will show a warning.
-if [ ! -f "$HOME/.config/wayvnc/novnc-cert.pem" ]; then
-    openssl req -x509 -newkey rsa:2048 \
-        -keyout "$HOME/.config/wayvnc/novnc-key.pem" \
-        -out "$HOME/.config/wayvnc/novnc-cert.pem" \
-        -days 365 -nodes -subj "/CN=vnc-server" \
-        -addext "subjectAltName=DNS:localhost" 2>/dev/null
-    echo "Generated self-signed TLS cert for noVNC."
-fi
-
 # ===== No systemd services — wayvnc + noVNC launch from labwc autostart =====
 
 # ===== Server-specific overrides =====
@@ -190,7 +178,7 @@ if ! pgrep -x wayvnc > /dev/null 2>&1; then
 fi
 sleep 1
 if ! pgrep -f "websockify.*6080" > /dev/null 2>&1; then
-  websockify --web /usr/share/novnc --ssl-only --cert "$HOME/.config/wayvnc/novnc-cert.pem" --key "$HOME/.config/wayvnc/novnc-key.pem" 6080 localhost:5900 &
+  websockify --web /usr/share/novnc 6080 localhost:5900 &
 fi
 
 # Audio: start PulseAudio with TCP forwarding (for VNC client audio)
@@ -438,7 +426,7 @@ echo ""
 echo "===== VPS/Container setup complete ====="
 echo ""
 echo "VNC password set."
-echo "noVNC: open https://<your-vps-ip>:6080/vnc.html in a browser (accept the self-signed cert warning)"
+echo "noVNC: open http://<your-vps-ip>:6080/vnc.html in a browser (password-only prompt)"
 echo "VNC client: connect to <your-vps-ip>:5900 with the password you set"
 echo "Audio: PulseAudio TCP is running — VNC client will forward sound"
 echo ""
