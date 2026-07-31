@@ -46,7 +46,7 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 /opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
 ```
 
-After setup, open `http://<vps-ip>:6080/vnc.html` in a browser and enter the password. Run `labwc` from a TTY to start the desktop.
+After setup, open `https://<vps-ip>:6080/vnc.html` in a browser (accept the self-signed cert warning), enter username `user` and the VNC password, and run `labwc` from a TTY to start the desktop.
 
 ### Packages (VPS)
 
