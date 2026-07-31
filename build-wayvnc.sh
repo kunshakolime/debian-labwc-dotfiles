@@ -26,8 +26,14 @@ set -e
 FORCE=0
 [ "${1:-}" = "--force" ] && FORCE=1
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PREFIX="${PREFIX:-/usr/local}"
 BUILD_DIR="${BUILD_DIR:-/tmp/wayvnc-build}"
+
+# Marks a successful source install of the patched neatvnc. Without this the
+# script would skip on distros whose native wayvnc is already >= 0.10, leaving
+# the unpatched (username+password) security types in place.
+MARKER="$PREFIX/share/wayvnc/nvnc-vnc-auth-first"
 
 AML_VERSION="v1.0.0"
 NEATVNC_VERSION="v1.0.1"
@@ -77,12 +83,12 @@ current_wayvnc_version() {
 CURRENT="$(current_wayvnc_version)"
 [ -n "$CURRENT" ] || CURRENT="0.0.0"
 
-if [ "$FORCE" -ne 1 ] && version_ge "$CURRENT" "0.10.0"; then
-    echo "wayvnc $CURRENT already supports allow_broken_crypto — nothing to build."
+if [ "$FORCE" -ne 1 ] && [ -f "$MARKER" ] && version_ge "$CURRENT" "0.10.0"; then
+    echo "Patched wayvnc $CURRENT already installed — nothing to build."
     exit 0
 fi
 
-echo "Building wayvnc >= 0.10 from source (current: $CURRENT) on $ARCH, $JOBS parallel job(s)..."
+echo "Building patched wayvnc >= 0.10 from source (current: $CURRENT) on $ARCH, $JOBS parallel job(s)..."
 
 # ===== Build dependencies =====
 sudo apt install -y \
@@ -90,6 +96,8 @@ sudo apt install -y \
   ninja-build \
   gcc \
   pkg-config \
+  patch \
+  curl \
   libpixman-1-dev \
   libgnutls28-dev \
   "$NETTLE_DEV" \
@@ -123,6 +131,10 @@ cd ..
 
 # ===== neatvnc (h264/FFmpeg disabled — not needed headless) =====
 cd "neatvnc-${NEATVNC_VERSION#v}"
+# Reorder security types so classic VNC auth (2) is offered first, making noVNC
+# show a password-only prompt. Upstream offers RSA-AES/AppleDH first, which
+# noVNC answers with a username+password prompt.
+patch -p1 -s < "$SCRIPT_DIR/patches/neatvnc-vnc-auth-first.diff"
 meson setup build --prefix "$PREFIX" \
   -Dh264=disabled -Dexamples=false -Dbenchmarks=false -Dtests=false
 meson compile -C build -j "$JOBS"
@@ -137,6 +149,9 @@ sudo meson install -C build
 cd ..
 
 sudo ldconfig
+
+sudo mkdir -p "$PREFIX/share/wayvnc"
+sudo touch "$MARKER"
 
 echo ""
 echo "===== wayvnc build complete ====="

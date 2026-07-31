@@ -53,7 +53,9 @@ On wayvnc >= 0.10 (Forky, or a source build — see below) `allow_broken_crypto`
 
 ### wayvnc from source (Debian Trixie)
 
-Trixie ships wayvnc 0.9.1, which lacks `allow_broken_crypto`. `build-wayvnc.sh` compiles aml → neatvnc → wayvnc 0.10.1 into `/usr/local` (pinned release tags, no FFmpeg needed) and is called automatically by `setuplabwc-vps.sh` when the installed wayvnc is older than 0.10. Re-running it is a no-op once a recent wayvnc is present; `./build-wayvnc.sh --force` rebuilds anyway.
+Trixie ships wayvnc 0.9.1, which lacks `allow_broken_crypto`. `build-wayvnc.sh` compiles aml → neatvnc → wayvnc 0.10.1 into `/usr/local` (pinned release tags, no FFmpeg needed) and is called automatically by `setuplabwc-vps.sh` when the installed wayvnc is older than 0.10 (or a previous source build is absent). Re-running it is a no-op once the patched build is installed; `./build-wayvnc.sh --force` rebuilds anyway.
+
+It also applies `patches/neatvnc-vnc-auth-first.diff`, which makes neatvnc offer classic VNC auth (type 2) first. Upstream lists RSA-AES/AppleDH before it, so noVNC picks those and shows a username+password prompt.
 
 ### Packages (VPS)
 
