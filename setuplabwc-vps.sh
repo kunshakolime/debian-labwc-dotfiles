@@ -181,10 +181,17 @@ if ! pgrep -f "websockify.*6080" > /dev/null 2>&1; then
   websockify --web /usr/share/novnc 6080 localhost:5900 &
 fi
 
-# Audio: start PulseAudio with TCP forwarding (for VNC client audio)
-pulseaudio --start \
-  --load="module-native-protocol-tcp auth-anonymous=1" \
-  2>/dev/null &
+# Audio: PipeWire stack (systemd user units are skipped as root via
+# ConditionUser=!root, so start the daemons directly).
+if ! pgrep -x pipewire > /dev/null 2>&1; then
+  pipewire &
+fi
+if ! pgrep -x wireplumber > /dev/null 2>&1; then
+  wireplumber &
+fi
+if ! pgrep -x pipewire-pulse > /dev/null 2>&1; then
+  pipewire-pulse &
+fi
 AUTOSTART
 chmod +x "$HOME/.config/labwc/autostart"
 
@@ -428,7 +435,7 @@ echo ""
 echo "VNC password set."
 echo "noVNC: open http://<your-vps-ip>:6080/vnc.html in a browser (password-only prompt)"
 echo "VNC client: connect to <your-vps-ip>:5900 with the password you set"
-echo "Audio: PulseAudio TCP is running — VNC client will forward sound"
+echo "Audio: PipeWire stack starts with labwc (pulsemixer widget works)"
 echo ""
 echo "Reboot or run 'labwc' from tty1 to start your desktop."
 echo "Press Super+Space to launch apps (wofi)."
