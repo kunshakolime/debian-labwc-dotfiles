@@ -15,6 +15,7 @@ window#waybar {
 
 /* Module styling */
 #workspaces,
+#custom-launcher,
 #clock,
 #custom-stats,
 #custom-netspeed,
@@ -29,6 +30,15 @@ window#waybar {
     margin: 4px 2px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 6px;
+}
+
+/* Launcher button */
+#custom-launcher {
+    font-size: 15px;
+    color: #81c784;
+}
+#custom-launcher:hover {
+    background: rgba(129, 199, 132, 0.25);
 }
 
 /* Workspace/task buttons */
