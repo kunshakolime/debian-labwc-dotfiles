@@ -69,6 +69,10 @@ sudo apt install -y \
   imv \
   firefox-esr
 
+# Build a recent wayvnc from source if the distro's version is < 0.10
+# (needed for allow_broken_crypto / password-only noVNC auth).
+"$SCRIPT_DIR/build-wayvnc.sh"
+
 # JetBrainsMono Nerd Font
 FONT_DIR="$HOME/.local/share/fonts"
 if fc-list | grep -qi "JetBrainsMono.*Nerd" 2>/dev/null; then
@@ -119,11 +123,32 @@ EOF
 
 # ===== VNC password =====
 mkdir -p "$HOME/.vnc" "$HOME/.config/wayvnc"
+
+# allow_broken_crypto (classic VNC password auth, password-only noVNC prompt)
+# only exists in wayvnc >= 0.10 — set it conditionally so the config still
+# works with older wayvnc (which falls back to AppleDH auth).
+version_ge() {
+    local va=(${1//./ }) vb=(${2//./ })
+    local i
+    for i in 0 1 2; do
+        local na="${va[$i]:-0}" nb="${vb[$i]:-0}"
+        if [ "$na" -lt "$nb" ]; then return 1; fi
+        if [ "$na" -gt "$nb" ]; then return 0; fi
+    done
+    return 0
+}
+WAYVNC_VERSION="$(wayvnc --version 2>/dev/null | head -1 | awk '{print $2}')"
+BROKEN_CRYPTO_LINE=""
+if [ -n "$WAYVNC_VERSION" ] && version_ge "$WAYVNC_VERSION" "0.10.0"; then
+    BROKEN_CRYPTO_LINE="allow_broken_crypto=true"
+fi
+
 cat > "$HOME/.config/wayvnc/config" <<EOF
 address=0.0.0.0
 port=5900
 enable_auth=true
 relax_encryption=true
+$BROKEN_CRYPTO_LINE
 username=user
 password=$VNC_PASSWORD
 EOF

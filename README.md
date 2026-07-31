@@ -12,6 +12,7 @@ Two install modes:
 |---|---|
 | `setuplabwc.sh` | Bare metal setup: installs packages, copies configs, sets up fonts |
 | `setuplabwc-vps.sh` | VPS setup: adds noVNC, sound, strips hardware deps. Takes VNC password as argument |
+| `build-wayvnc.sh` | Builds wayvnc >= 0.10 from source (for Trixie's old 0.9.1); no-op if not needed |
 | `uninstall-vps.sh` | Removes VPS services/autostart without removing packages |
 | `services/` | Systemd user service files for wayvnc and noVNC |
 | `bashrc` | Shell config with nnn quitcd wrapper (`n()` function) |
@@ -46,7 +47,13 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 /opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
 ```
 
-After setup, open `https://<vps-ip>:6080/vnc.html` in a browser (accept the self-signed cert warning), enter username `user` and the VNC password, and run `labwc` from a TTY to start the desktop.
+After setup, open `https://<vps-ip>:6080/vnc.html` in a browser (accept the self-signed cert warning) and enter the VNC password. Run `labwc` from a TTY to start the desktop.
+
+On wayvnc >= 0.10 (Forky, or a source build — see below) `allow_broken_crypto` enables classic VNC password auth, so noVNC shows a simple password prompt. Older wayvnc (Trixie's 0.9.1) falls back to AppleDH auth, which requires the HTTPS address above and also asks for the username `user`. The HTTPS endpoint always works either way.
+
+### wayvnc from source (Debian Trixie)
+
+Trixie ships wayvnc 0.9.1, which lacks `allow_broken_crypto`. `build-wayvnc.sh` compiles aml → neatvnc → wayvnc 0.10.1 into `/usr/local` (pinned release tags, no FFmpeg needed) and is called automatically by `setuplabwc-vps.sh` when the installed wayvnc is older than 0.10. Re-running it is a no-op once a recent wayvnc is present; `./build-wayvnc.sh --force` rebuilds anyway.
 
 ### Packages (VPS)
 
