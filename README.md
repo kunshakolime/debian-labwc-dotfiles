@@ -49,6 +49,8 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 
 After setup, open `http://<vps-ip>:6080/vnc.html` in a browser and enter the VNC password. Run `labwc` from a TTY to start the desktop.
 
+Phone use: in noVNC click the settings gear and set **Resize → Remote**. The headless desktop is resized on demand — rotate the phone to portrait and the VNC server (wayvnc 0.10.1, `enable_resizing` on by default) resizes the output to match the phone's viewport, so it fills the screen instead of being a tiny landscape window.
+
 The patched wayvnc build (or Forky's 0.10.1 built by `build-wayvnc.sh`) offers classic VNC password auth first, so noVNC shows a simple password-only prompt over plain HTTP — no self-signed cert warning, no username.
 
 ### wayvnc from source (Debian Trixie)
