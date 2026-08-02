@@ -33,7 +33,7 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 
 ### Packages (bare metal)
 
-labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
+labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
 
 ## VPS install
 
@@ -60,7 +60,7 @@ Phone use: in noVNC set **Resize → Remote**; the desktop resizes to match the 
 
 Same as bare metal minus: wlsunset, bluez, libspa-0.2-bluetooth, brightnessctl, network-manager, wlr-randr
 
-Added: wayvnc, novnc, websockify, xwayland, xdg-desktop-portal-wlr
+Added: wayvnc, novnc, websockify, xwayland
 
 ### Uninstall VPS setup
 

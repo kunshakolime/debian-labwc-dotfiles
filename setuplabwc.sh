@@ -34,7 +34,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # ===== Packages =====
-# VPS-only:  xwayland, wayvnc, novnc, websockify, xdg-desktop-portal-wlr, openssl
+# VPS-only:  xwayland, wayvnc, novnc, websockify, openssl
 # Desktop-only: wlsunset, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
 #               network-manager, wlr-randr
 install_packages() {
@@ -43,14 +43,14 @@ install_packages() {
         dunst libnotify-bin copyq wl-clipboard grim slurp
         jq curl btop nnn vim tmux fastfetch numix-gtk-theme
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
-        xdg-desktop-portal xdg-desktop-portal-gtk
+        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
         vlc imv firefox-esr
     )
 
     if [ "$MODE" = "desktop" ]; then
         pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager wlr-randr )
     else
-        pkgs+=( xwayland wayvnc novnc websockify xdg-desktop-portal-wlr openssl )
+        pkgs+=( xwayland wayvnc novnc websockify openssl )
     fi
 
     sudo apt install -y "${pkgs[@]}"
