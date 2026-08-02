@@ -104,7 +104,7 @@
   <windowSnapMaxRange>10</windowSnapMaxRange>
 
   <theme>
-    <name>Numix</name>
+    <name>Default</name>
     <cornerRadius>6</cornerRadius>
   </theme>
 </labwc_config>

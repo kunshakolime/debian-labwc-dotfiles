@@ -1,0 +1,18 @@
+# Dark theme for labwc
+# Menu
+menu.items.bg.color: #1e1e1e
+menu.items.text.color: #e0e0e0
+menu.items.active.bg.color: #81c784
+menu.items.active.text.color: #1e1e1e
+menu.title.bg.color: #2a2a2a
+menu.title.text.color: #e0e0e0
+
+# Window titlebar (the bar around each window)
+window.active.title.bg.color: #2a2a2a
+window.inactive.title.bg.color: #1e1e1e
+window.active.label.text.color: #e0e0e0
+window.inactive.label.text.color: #888888
+window.active.border.color: #3a3a3a
+window.inactive.border.color: #2a2a2a
+window.active.button.unpressed.image.color: #e0e0e0
+window.inactive.button.unpressed.image.color: #888888
