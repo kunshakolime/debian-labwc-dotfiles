@@ -34,7 +34,7 @@ selected=$(echo "$entries" | wofi --dmenu --prompt "Resolution" 2>/dev/null)
 
 output=$(echo "$selected" | sed 's/^\[\(.*\)\].*$/\1/')
 mode=$(echo "$selected" | awk '{print $2}')
-rate=$(echo "$selected" | awk '{print $3}' | tr -d 'Hz')
+rate=$(echo "$selected" | awk '{print $4}' | tr -d 'Hz')
 
 wlr-randr --output "$output" --mode "${mode}@${rate}"
 
