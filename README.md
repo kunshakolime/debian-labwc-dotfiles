@@ -106,9 +106,8 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `v` | Clipboard history (cliphist + wofi) |
 | `Super` + `w` | Wallpaper picker + rotation (wofi) |
 | `Super` + `PrtSc` / `Shift` + `PrtSc` | Full screenshot / area → edit in swappy |
-| `Super` + `Up` / `Down` | Volume ±5% |
-| `Super` + `m` | Toggle mute |
-| Media keys | Playback control |
+| `Super` + arrows | Snap window to edge |
+| Media keys | Volume / playback control |
 | Brightness keys | Backlight ±2% *(bare metal only)* |
 
 ## Wallpaper
