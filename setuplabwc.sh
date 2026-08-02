@@ -307,7 +307,7 @@ RCXML
 
     "modules-left": ["wlr/taskbar"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/netspeed", "custom/stats", "network", "pulseaudio", "tray", "custom/weather"],
+    "modules-right": ["custom/netspeed", "custom/stats", "pulseaudio", "tray", "custom/weather"],
 
     "wlr/taskbar": {
         "format": "{name}",
@@ -334,13 +334,6 @@ RCXML
         "exec": "$HOME/.config/waybar/netspeed.sh",
         "interval": 3,
         "on-click": "footclient -e btop"
-    },
-
-    "network": {
-        "format-ethernet": "  Connected",
-        "format-disconnected": "  Disconnected",
-        "tooltip-format-ethernet": "IP: {ipaddr}",
-        "interval": 30
     },
 
     "pulseaudio": {
@@ -390,7 +383,6 @@ window#waybar {
 #clock,
 #custom-stats,
 #custom-netspeed,
-#network,
 #pulseaudio,
 #tray,
 #custom-weather {
@@ -418,7 +410,6 @@ window#waybar {
 
 #custom-stats { color: #81c784; }
 #custom-netspeed { color: #4dd0e1; }
-#network { color: #4dd0e1; }
 #pulseaudio { color: #ffb74d; }
 #clock { color: #e0e0e0; }
 #custom-weather { color: #90caf9; }
