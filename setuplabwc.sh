@@ -246,7 +246,7 @@ password=$VNC_PASSWORD
 EOF
     chmod 600 "$HOME/.config/wayvnc/config"
 
-    # --- VPS configs: autostart (VNC+audio), rc.xml (no brightness), waybar (no bluetooth/battery) ---
+    # --- VPS configs: autostart (VNC+audio), waybar (no bluetooth/battery) ---
     cp -r "$SCRIPT_DIR/vps/.config/"* "$HOME/.config/"
     chmod +x "$HOME/.config/labwc/autostart"
 }

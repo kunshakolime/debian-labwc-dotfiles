@@ -11,7 +11,7 @@ One script, two modes:
 | File/Dir | What it is |
 |---|---|
 | `setuplabwc.sh` | Setup: bare metal by default, VPS with `--vps <password>` (noVNC via distro wayvnc, no compiling) |
-| `vps/.config/` | VPS-only configs (autostart with VNC, rc.xml without brightness, waybar without bluetooth/battery); overlaid by `--vps` mode |
+| `vps/.config/` | VPS-only configs (autostart with VNC, waybar without bluetooth/battery); overlaid by `--vps` mode |
 | `uninstall-vps.sh` | Removes VPS setup (VNC, noVNC, headless env, autostart) without removing packages |
 | `uninstall.sh` | Removes the desktop setup (configs, scripts, bashrc additions) without removing packages |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
