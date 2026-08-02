@@ -33,6 +33,33 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# Friendly banner: say who we're setting up and where configs land, so a root
+# run (configs go to /root) never gets confused with a normal-user run.
+show_target() {
+    local target="$USER"
+    [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ] && target="$SUDO_USER"
+    echo "======================================"
+    echo " labwc setup — mode: $MODE"
+    echo " target user: $target (home: $HOME)"
+    if [ "$EUID" -eq 0 ]; then
+        echo " running as root — configs go to /root."
+        echo " to set up a normal user instead, run this as that user (no sudo)."
+    else
+        echo " packages install via sudo; configs go to $HOME."
+    fi
+    echo "======================================"
+}
+
+# brightnessctl needs write access to the backlight device, granted to the
+# 'video' group. Root already has it; normal users need to be added.
+ensure_video_group() {
+    if [ "$EUID" -ne 0 ] && ! id -nG "$USER" | tr ' ' '\n' | grep -qx video; then
+        echo "Adding $USER to the 'video' group (needed for brightness keys)..."
+        sudo usermod -aG video "$USER"
+        echo "  Done — log out and back in for it to take effect."
+    fi
+}
+
 # ===== Packages =====
 # VPS-only:  xwayland, wayvnc, novnc, websockify, openssl
 # Desktop-only: wlsunset, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
@@ -221,6 +248,7 @@ finish() {
 
 # SETUP_TEST=1 loads the functions only (no side effects) so they can be tested.
 if [ "${SETUP_TEST:-0}" != "1" ]; then
+    show_target
     install_packages
     install_nerd_font
     apply_configs
@@ -229,6 +257,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
 
     if [ "$MODE" = "desktop" ]; then
         install_bluetui
+        ensure_video_group
     else
         configure_vps
     fi

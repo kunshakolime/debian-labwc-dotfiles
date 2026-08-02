@@ -13,6 +13,7 @@ One script, two modes:
 | `setuplabwc.sh` | Setup: bare metal by default, VPS with `--vps <password>` (noVNC via distro wayvnc, no compiling) |
 | `vps/.config/` | VPS-only configs (autostart with VNC, rc.xml without brightness, waybar without bluetooth/battery); overlaid by `--vps` mode |
 | `uninstall-vps.sh` | Removes VPS setup (VNC, noVNC, headless env, autostart) without removing packages |
+| `uninstall.sh` | Removes the desktop setup (configs, scripts, bashrc additions) without removing packages |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
 | `.config/waybar/` | Waybar status bar (clock, network, audio, bluetooth, battery, taskbar, weather, stats) |
 | `.config/wofi/` | App launcher config (dark, Nerd Font) |
@@ -39,6 +40,10 @@ repo, so you can re-run `setuplabwc.sh` any time without internet:
 sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
 /opt/labwc_dotfiles/setuplabwc.sh
 ```
+
+Run it as the desktop user — configs go to that user's home, packages prompt for
+sudo, and the user is added to the `video` group (brightness keys). Running it as
+root instead sets up `/root` and skips the group step. Reset with `uninstall.sh`.
 
 ### Packages (bare metal)
 
