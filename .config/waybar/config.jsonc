@@ -54,12 +54,12 @@
         "on-click": "footclient -e btop"
     },
 
-    // --- Network (bare applet-style icon; nm-applet stays in the tray) ---
+    // --- Network (text only; the nm-applet icon in the tray covers the icon) ---
     "network": {
-        "format-wifi": "",
-        "format-ethernet": "",
-        "format-disconnected": "",
-        "tooltip-format-wifi": "{essid}  {signalStrength}%  IP: {ipaddr}",
+        "format-wifi": "{essid} ({signalStrength}%)",
+        "format-ethernet": "Connected",
+        "format-disconnected": "Disconnected",
+        "tooltip-format-wifi": "IP: {ipaddr}",
         "tooltip-format-ethernet": "IP: {ipaddr}",
         "interval": 30,
         "on-click": "footclient -e nmtui"

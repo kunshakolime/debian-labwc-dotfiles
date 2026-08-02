@@ -129,11 +129,22 @@ install_bluetui() {
     echo "bluetui installed."
 }
 
+# libadwaita apps (GNOME Disks, Loupe, ...) read the GSettings color-scheme
+# first; ~/.config/gtk-4.0/settings.ini is only a fallback. Set both.
+configure_dark_theme() {
+    if command -v gsettings >/dev/null 2>&1; then
+        gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null || true
+    fi
+}
+
 setup_path_and_nnn() {
-    case ":$PATH:" in
-        *:"$HOME/.local/bin":*) ;;
-        *) echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc" ;;
-    esac
+    local line='export PATH="$HOME/.local/bin:$PATH"'
+    # dedupe: drop any existing copies of the line, then append exactly one
+    if [ -f "$HOME/.bashrc" ] && grep -qF "$line" "$HOME/.bashrc"; then
+        grep -vxF "$line" "$HOME/.bashrc" > "$HOME/.bashrc.tmp"
+        mv "$HOME/.bashrc.tmp" "$HOME/.bashrc"
+    fi
+    echo "$line" >> "$HOME/.bashrc"
 
     if ! grep -q "quitcd wrapper" "$HOME/.bashrc" 2>/dev/null; then
         cat >> "$HOME/.bashrc" <<'EOF'
@@ -213,6 +224,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
     install_packages
     install_nerd_font
     apply_configs
+    configure_dark_theme
     setup_path_and_nnn
 
     if [ "$MODE" = "desktop" ]; then
