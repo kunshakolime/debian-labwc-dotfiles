@@ -63,7 +63,7 @@
       <action name="Execute" command="grim" />
     </keybind>
     <keybind key="W-S-Print">
-      <action name="Execute" command='grim -g \"$(slurp)\"' />
+      <action name="Execute" command='grim -g \"$(slurp)\" - | swappy -f -' />
     </keybind>
 
     <!-- Volume control -->

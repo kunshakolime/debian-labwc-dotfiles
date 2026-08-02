@@ -33,7 +33,7 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 
 ### Packages (bare metal)
 
-labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
+labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
 
 ## VPS install
 
@@ -81,7 +81,7 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `1..9` | Switch workspace |
 | `Super` + `Shift` + `1..9` | Move window to workspace |
 | `Super` + `p` | Power menu (lock / suspend / reboot / shutdown) |
-| `Super` + `PrtSc` / `Shift` + `PrtSc` | Full / area screenshot |
+| `Super` + `PrtSc` / `Shift` + `PrtSc` | Full screenshot / area → edit in swappy |
 | `Super` + `Up` / `Down` | Volume ±5% |
 | `Super` + `m` | Toggle mute |
 | Media keys | Playback control |
@@ -92,7 +92,7 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | Module | Click action |
 |--------|-------------|
 | CPU/RAM stats | `btop` |
-| Network | `nmtui` |
+| Network | `nmtui` (or the tray icon via nm-applet) |
 | Audio | `pulsemixer` |
 | Bluetooth | `bluetui` *(bare metal only)* |
 | Display | Resolution picker (wofi + wlr-randr) *(bare metal only)* |

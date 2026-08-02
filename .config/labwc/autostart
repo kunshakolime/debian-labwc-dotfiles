@@ -24,3 +24,8 @@ copyq --start-server &
 if command -v lxpolkit > /dev/null 2>&1; then
     lxpolkit &
 fi
+
+# nm-applet — wifi/network tray icon (NetworkManager)
+if command -v nm-applet > /dev/null 2>&1; then
+    nm-applet &
+fi
