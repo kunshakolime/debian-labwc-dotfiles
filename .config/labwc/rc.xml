@@ -11,7 +11,7 @@
 
     <!-- Launcher -->
     <keybind key="W-Space">
-      <action name="Execute" command="wofi --show drun" />
+      <action name="Execute" command="wofi" />
     </keybind>
 
     <!-- Clipboard history -->
@@ -73,7 +73,7 @@
       <action name="Execute" command="grim" />
     </keybind>
     <keybind key="W-S-Print">
-      <action name="Execute" command='grim -g \"$(slurp)\" - | swappy -f -' />
+      <action name="Execute" command='grim -g "$(slurp)" - | swappy -f -' />
     </keybind>
 
     <!-- Volume control -->
