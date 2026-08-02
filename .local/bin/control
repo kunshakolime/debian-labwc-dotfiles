@@ -1,0 +1,29 @@
+#!/bin/bash
+# Flat control center menu: clipboard, wallpaper, keyboard layout, resolution,
+# night light, and power. Entries whose tool is missing are hidden, so the same
+# menu works on bare metal and VPS.
+
+entries="Clipboard history"
+command -v wallpaper >/dev/null 2>&1 && entries="$entries\nWallpaper"
+command -v kb-layout >/dev/null 2>&1 && entries="$entries\nKeyboard layout"
+command -v wlr-randr >/dev/null 2>&1 && entries="$entries\nResolution"
+command -v wlsunset >/dev/null 2>&1 && entries="$entries\nNight light"
+
+power="Suspend\nReboot\nShutdown"
+command -v swaylock >/dev/null 2>&1 && power="Lock\n$power"
+entries="$entries\n$power"
+
+choice=$(printf "%b" "$entries" | wofi --dmenu --prompt="Control" --width=30% --height=50% --location=center)
+
+case "$choice" in
+    "Clipboard history") clipboard ;;
+    "Wallpaper")         wallpaper ;;
+    "Keyboard layout")   kb-layout ;;
+    "Resolution")        resolution ;;
+    "Night light")       nightlight ;;
+    "Lock")              swaylock ;;
+    "Suspend")           systemctl suspend ;;
+    "Reboot")            systemctl reboot ;;
+    "Shutdown")          systemctl poweroff ;;
+    *)                   exit 0 ;;
+esac
