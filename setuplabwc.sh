@@ -142,6 +142,29 @@ apply_configs() {
     fi
 }
 
+# Packet (Quick Share) — desktop-only, from the prebuilt .deb so setup never
+# needs a compile toolchain. Skipped on VPS installs (no Bluetooth/Wi-Fi).
+install_packet() {
+    local url="https://github.com/kunshakolime/debian-13-tricks/raw/refs/heads/main/builds/packet/packet_0.6.1_amd64.deb"
+    local deb="packet_0.6.1_amd64.deb"
+    local tmp
+
+    if command -v packet >/dev/null 2>&1; then
+        echo "packet already installed, skipping."
+        return
+    fi
+
+    tmp="$(mktemp -d)"
+    echo "Downloading packet (Quick Share)..."
+    if ! curl -fL "$url" -o "$tmp/$deb"; then
+        echo "WARNING: packet download failed, skipping."
+        rm -rf "$tmp"
+        return
+    fi
+    sudo apt install --no-upgrade -y "$tmp/$deb"
+    rm -rf "$tmp"
+}
+
 install_bluetui() {
     local bin="/usr/local/bin/bluetui"
     if [ -f "$bin" ]; then
@@ -259,6 +282,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
 
     if [ "$MODE" = "desktop" ]; then
         install_bluetui
+        install_packet
         ensure_video_group
     else
         configure_vps
