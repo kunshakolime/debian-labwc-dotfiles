@@ -22,7 +22,7 @@ One script, two modes:
 | `.config/gtk-4.0/` | GTK4 dark theme (Adwaita dark) |
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper, mount-net) |
 | `vendor/` | Offline assets: `fonts/` (JetBrainsMono Nerd Font) and `bluetui` binary |
 
 ## Offline reinstall / new user
@@ -42,7 +42,7 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 
 ### Packages (bare metal)
 
-labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
+labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, imv, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
 
 ## VPS install
 
@@ -118,6 +118,24 @@ State lives in `~/.config/wallpaper.conf` (`WALLPAPER`, `ROTATE_INTERVAL`, `ROTA
 Rotation runs as a tiny `sleep` loop (`wallpaper-rotate`) — no extra daemon. Drop new
 wallpapers into `Pictures/Wallpapers/` and add them to the rotation set from the menu.
 
+## Network mounts (WebDAV / SMB / SFTP)
+
+`mount-net` adds network shares without touching any config file — it writes
+the systemd units and credentials for you. Shares live at `/mnt/<name>`.
+
+```bash
+mount-net add nas     # asks type, URL/server, login — that's it
+mount-net status      # which shares, mode, mounted?
+mount-net keep nas    # mount at boot, never auto-unmount
+mount-net auto nas    # mount on access, unmount after 5 min idle (default)
+mount-net mount nas   # mount now (or umount, remove, list)
+```
+
+Two modes: **auto** (default — mounts when you open the folder, unmounts after
+idle) and **keep** (always connected). Flip anytime. WebDAV uses `davfs2`, SMB
+uses `cifs-utils`, SFTP uses `sshfs` (key login: `ssh-copy-id` once). No daemons
+run when a share isn't mounted.
+
 ## Waybar clicks
 
 | Module | Click action |
@@ -135,6 +153,7 @@ wallpapers into `Pictures/Wallpapers/` and add them to the rotation set from the
 - `kb-layout` — cycle keyboard layout
 - `resolution` — display resolution picker
 - `power` — power menu (lock / suspend / reboot / shutdown)
+- `mount-net` — add/remove/mount network shares (WebDAV, SMB, SFTP)
 
 ## Planned
 

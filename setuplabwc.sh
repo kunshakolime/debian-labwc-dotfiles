@@ -38,6 +38,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Desktop-only: wlsunset, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
 #               network-manager, network-manager-gnome, wlr-randr,
 #               gnome-disk-utility
+# Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP)
 install_packages() {
     local pkgs=(
         labwc waybar wofi foot fonts-font-awesome swaybg
@@ -46,6 +47,7 @@ install_packages() {
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
         vlc imv firefox-esr swappy cliphist
+        davfs2 cifs-utils sshfs
     )
 
     if [ "$MODE" = "desktop" ]; then
@@ -98,7 +100,7 @@ apply_configs() {
         chmod +x "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/brightness" \
                  "$HOME/.local/bin/volume"    "$HOME/.local/bin/resolution" \
                  "$HOME/.local/bin/nightlight" "$HOME/.local/bin/wallpaper" \
-                 "$HOME/.local/bin/wallpaper-rotate"
+                 "$HOME/.local/bin/wallpaper-rotate" "$HOME/.local/bin/mount-net"
         cp "$SCRIPT_DIR/.local/share/applications/desktop-only/"*.desktop "$HOME/.local/share/applications/"
     else
         cp "$SCRIPT_DIR/.local/bin/volume"     "$HOME/.local/bin/"
@@ -106,7 +108,8 @@ apply_configs() {
         cp "$SCRIPT_DIR/.local/bin/resolution" "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/power"      "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/clipboard"  "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard"
+        cp "$SCRIPT_DIR/.local/bin/mount-net"  "$HOME/.local/bin/"
+        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard" "$HOME/.local/bin/mount-net"
     fi
 }
 
@@ -202,6 +205,7 @@ finish() {
     echo ""
     echo "Reboot or run 'labwc' from tty1 to start your new desktop."
     echo "Press Super+Space to launch apps (wofi)."
+    echo "Network drives (WebDAV/SMB/SFTP): run 'mount-net add' once per share."
 }
 
 # SETUP_TEST=1 loads the functions only (no side effects) so they can be tested.

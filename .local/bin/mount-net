@@ -1,0 +1,209 @@
+#!/bin/bash
+# Network share manager — WebDAV, Samba (SMB), SFTP.
+#
+#   mount-net add <name>            — add a share (asks a few questions)
+#   mount-net remove <name>         — forget a share
+#   mount-net list                  — configured shares
+#   mount-net status                — shares + mode (auto/keep) + mounted state
+#   mount-net mount <name>          — mount now
+#   mount-net umount <name>         — unmount now
+#   mount-net auto <name>           — mount on access, unmount after idle (default)
+#   mount-net keep <name>           — mount at boot, never auto-unmount
+#
+# Everything is written for you as systemd .mount/.automount units
+# (/mnt/<name>); credentials are stored root-only. No config files to hand-edit.
+
+set -e
+
+UNIT_DIR=/etc/systemd/system
+DAV_SECRETS=/etc/davfs2/secrets
+CIFS_CRED_DIR=/etc/cifs-credentials
+IDLE_SEC=300
+
+unit()        { echo "mnt-$1"; }
+mount_point() { echo "/mnt/$1"; }
+
+valid_name() { [[ "$1" =~ ^[a-zA-Z0-9-]+$ ]]; }
+
+name_from_unit() {
+    local base
+    base="$(basename "$1" .mount)"
+    echo "${base#mnt-}"
+}
+
+require_name() {
+    [ -n "$1" ] || { echo "usage: mount-net $CMD <name>"; exit 1; }
+    valid_name "$1" || { echo "invalid name (letters, digits, - only): $1"; exit 1; }
+}
+
+share_type() {
+    sed -n 's/^Type=//p' "$UNIT_DIR/$(unit "$1").mount" 2>/dev/null || echo ""
+}
+
+write_units() {
+    local name="$1" type="$2" what="$3" fstype="$4" opts="$5"
+    sudo tee "$UNIT_DIR/$(unit "$name").mount" >/dev/null <<EOF
+[Unit]
+Description=$type network share $name
+
+[Mount]
+What=$what
+Where=$(mount_point "$name")
+Type=$fstype
+Options=$opts
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    sudo tee "$UNIT_DIR/$(unit "$name").automount" >/dev/null <<EOF
+[Unit]
+Description=$type network share $name (auto)
+
+[Automount]
+Where=$(mount_point "$name")
+TimeoutIdleSec=$IDLE_SEC
+
+[Install]
+WantedBy=multi-user.target
+EOF
+}
+
+switch_mode() {
+    local name="$1" mode="$2" u
+    u="$(unit "$name")"
+    require_name "$name"
+    case "$mode" in
+        auto)
+            sudo systemctl disable --now "$u.mount" 2>/dev/null || true
+            sudo systemctl enable --now "$u.automount"
+            ;;
+        keep)
+            sudo systemctl disable --now "$u.automount" 2>/dev/null || true
+            sudo systemctl enable --now "$u.mount"
+            ;;
+        *)
+            echo "mode must be 'auto' or 'keep'"
+            exit 1
+            ;;
+    esac
+    echo "'$name' -> $(mount_point "$name") is now $mode"
+}
+
+add() {
+    local type="" name="" what="" fstype="" opts="" user="" pass=""
+    printf 'Add network share\n'
+    read -rp 'Type (webdav/smb/sftp) [webdav]: ' type
+    type="${type:-webdav}"
+    case "$type" in webdav|smb|sftp) ;; *) echo "unknown type: $type"; exit 1 ;; esac
+    read -rp 'Name (short label, e.g. nas): ' name
+    valid_name "$name" || { echo "invalid name (letters, digits, - only): $name"; exit 1; }
+    [ ! -f "$UNIT_DIR/$(unit "$name").mount" ] || { echo "share '$name' already exists"; exit 1; }
+
+    case "$type" in
+        webdav)
+            read -rp 'WebDAV URL (e.g. https://host/remote.php/dav/files/user): ' what
+            [ -n "$what" ] || { echo "URL required"; exit 1; }
+            read -rp 'Username: ' user
+            read -rsp 'Password: ' pass; echo
+            fstype="davfs"
+            opts="uid=$(id -u),gid=$(id -g),_netdev"
+            sudo tee -a "$DAV_SECRETS" >/dev/null <<EOF
+$what $user $pass
+EOF
+            sudo chmod 600 "$DAV_SECRETS"
+            ;;
+        smb)
+            local server share
+            read -rp 'Server (host or IP): ' server
+            read -rp 'Share name: ' share
+            read -rp 'Username: ' user
+            read -rsp 'Password: ' pass; echo
+            what="//$server/$share"
+            fstype="cifs"
+            opts="credentials=$CIFS_CRED_DIR/$name,uid=$(id -u),gid=$(id -g),iocharset=utf8,_netdev"
+            sudo install -d -m 700 "$CIFS_CRED_DIR"
+            sudo tee "$CIFS_CRED_DIR/$name" >/dev/null <<EOF
+username=$user
+password=$pass
+EOF
+            sudo chmod 600 "$CIFS_CRED_DIR/$name"
+            ;;
+        sftp)
+            local suser rpath
+            read -rp 'User@Server (e.g. me@host): ' suser
+            read -rp 'Remote path [/home]: ' rpath
+            rpath="${rpath:-/home}"
+            what="$suser:$rpath"
+            fstype="fuse.sshfs"
+            opts="uid=$(id -u),gid=$(id -g),allow_other,_netdev"
+            echo "Note: set up key login once with:  ssh-copy-id $suser"
+            ;;
+    esac
+
+    write_units "$name" "$type" "$what" "$fstype" "$opts"
+    sudo systemctl daemon-reload
+
+    local mode
+    read -rp 'Mode — auto (mount on access, unmount after idle) or keep (never auto-unmount)? [auto]: ' mode
+    mode="${mode:-auto}"
+    switch_mode "$name" "$mode"
+    echo "Added '$name' -> $(mount_point "$name")"
+}
+
+remove_share() {
+    CMD=remove require_name "$1"
+    local name="$1" u
+    u="$(unit "$name")"
+    sudo systemctl disable --now "$u.automount" "$u.mount" 2>/dev/null || true
+    sudo rm -f "$UNIT_DIR/$u.automount" "$UNIT_DIR/$u.mount"
+    sudo systemctl daemon-reload
+    sudo rm -f "$CIFS_CRED_DIR/$name"
+    echo "Removed '$name' (WebDAV credentials stay in $DAV_SECRETS — remove the line by hand if you want)"
+}
+
+list_shares() {
+    shopt -s nullglob
+    local f name
+    for f in "$UNIT_DIR"/mnt-*.mount; do
+        name="$(name_from_unit "$f")"
+        printf '%-15s %-8s %s\n' "$name" "$(share_type "$name")" "$(mount_point "$name")"
+    done
+    shopt -u nullglob
+}
+
+status() {
+    shopt -s nullglob
+    local f name u type mode a m
+    for f in "$UNIT_DIR"/mnt-*.mount; do
+        name="$(name_from_unit "$f")"
+        u="$(unit "$name")"
+        type="$(share_type "$name")"
+        a="$(systemctl is-enabled "$u.automount" 2>/dev/null || true)"
+        m="$(systemctl is-enabled "$u.mount" 2>/dev/null || true)"
+        if [ "$a" = "enabled" ]; then mode="auto"
+        elif [ "$m" = "enabled" ]; then mode="keep"
+        else mode="off"; fi
+        if findmnt -n "$(mount_point "$name")" >/dev/null 2>&1; then
+            printf '%-15s %-6s %-8s mounted\n' "$name" "$mode" "$type"
+        else
+            printf '%-15s %-6s %-8s unmounted\n' "$name" "$mode" "$type"
+        fi
+    done
+    shopt -u nullglob
+}
+
+CMD="${1:-}"
+case "$CMD" in
+    add)   shift; add "$@" ;;
+    remove) shift; remove_share "$@" ;;
+    list)  list_shares ;;
+    status) status ;;
+    mount) shift; CMD=mount require_name "$1"; sudo systemctl start "$(unit "$1").mount" ;;
+    umount|unmount) shift; CMD=umount require_name "$1"; sudo systemctl stop "$(unit "$1").mount" ;;
+    auto)  shift; CMD=auto require_name "$1"; switch_mode "$1" auto ;;
+    keep)  shift; CMD=keep require_name "$1"; switch_mode "$1" keep ;;
+    *)
+        echo "usage: mount-net {add|remove|list|status|mount|umount|auto|keep} [name]"
+        exit 1
+        ;;
+esac
