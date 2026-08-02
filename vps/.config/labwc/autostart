@@ -6,7 +6,8 @@ foot --server &
 swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
 waybar &
 dunst &
-copyq --start-server &
+# cliphist — clipboard manager with history (press Super+V to browse)
+wl-paste --watch cliphist store &
 
 # lxpolkit — GUI sudo prompts (mounting drives, admin tools, etc.)
 if command -v lxpolkit > /dev/null 2>&1; then

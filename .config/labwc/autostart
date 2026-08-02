@@ -17,8 +17,8 @@ dunst &
 # wlsunset — blue light filter at night (adjust lat/long for your location)
 wlsunset -l 52.5 -L 13.4 &
 
-# copyq — clipboard manager with history (runs in system tray)
-copyq --start-server &
+# cliphist — clipboard manager with history (press Super+V to browse)
+wl-paste --watch cliphist store &
 
 # lxpolkit — GUI sudo prompts (mounting drives, admin tools, etc.)
 if command -v lxpolkit > /dev/null 2>&1; then

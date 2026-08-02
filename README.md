@@ -22,7 +22,7 @@ One script, two modes:
 | `.config/gtk-4.0/` | GTK4 dark theme (Numix) |
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard) |
 
 ## Bare metal install
 
@@ -33,7 +33,7 @@ sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/la
 
 ### Packages (bare metal)
 
-labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
+labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, imv, bluetui, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, numix-gtk-theme, JetBrainsMono Nerd Font
 
 ## VPS install
 
@@ -81,6 +81,7 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `1..9` | Switch workspace |
 | `Super` + `Shift` + `1..9` | Move window to workspace |
 | `Super` + `p` | Power menu (lock / suspend / reboot / shutdown) |
+| `Super` + `v` | Clipboard history (cliphist + wofi) |
 | `Super` + `PrtSc` / `Shift` + `PrtSc` | Full screenshot / area → edit in swappy |
 | `Super` + `Up` / `Down` | Volume ±5% |
 | `Super` + `m` | Toggle mute |

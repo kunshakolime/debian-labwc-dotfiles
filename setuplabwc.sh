@@ -40,11 +40,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 install_packages() {
     local pkgs=(
         labwc waybar wofi foot fonts-font-awesome swaybg
-        dunst libnotify-bin copyq wl-clipboard grim slurp
+        dunst libnotify-bin wl-clipboard grim slurp
         jq curl btop nnn vim tmux fastfetch numix-gtk-theme
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
-        vlc imv firefox-esr swappy
+        vlc imv firefox-esr swappy cliphist
     )
 
     if [ "$MODE" = "desktop" ]; then
@@ -99,7 +99,8 @@ apply_configs() {
         cp "$SCRIPT_DIR/.local/bin/kb-layout"  "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/resolution" "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/power"      "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power"
+        cp "$SCRIPT_DIR/.local/bin/clipboard"  "$HOME/.local/bin/"
+        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard"
     fi
 }
 

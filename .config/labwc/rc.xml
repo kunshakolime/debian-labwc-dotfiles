@@ -14,6 +14,11 @@
       <action name="Execute" command="wofi --show drun" />
     </keybind>
 
+    <!-- Clipboard history -->
+    <keybind key="W-v">
+      <action name="Execute" command="clipboard" />
+    </keybind>
+
     <!-- Terminal -->
     <keybind key="W-Return">
       <action name="Execute" command="footclient" />
