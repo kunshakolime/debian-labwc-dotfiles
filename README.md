@@ -22,7 +22,7 @@ One script, two modes:
 | `.config/gtk-4.0/` | GTK4 dark theme (Numix) |
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power) |
 
 ## Bare metal install
 
@@ -78,6 +78,9 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `Enter` | Terminal (footclient) |
 | `Super` + `q` | Close window |
 | `Super` + `Tab` / `Shift` + `Tab` | Cycle windows |
+| `Super` + `1..9` | Switch workspace |
+| `Super` + `Shift` + `1..9` | Move window to workspace |
+| `Super` + `p` | Power menu (lock / suspend / reboot / shutdown) |
 | `Super` + `PrtSc` / `Shift` + `PrtSc` | Full / area screenshot |
 | `Super` + `Up` / `Down` | Volume ±5% |
 | `Super` + `m` | Toggle mute |
@@ -100,6 +103,15 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 - `volume up` / `volume down` / `volume mute` — audio control
 - `kb-layout` — cycle keyboard layout
 - `resolution` — display resolution picker
+- `power` — power menu (lock / suspend / reboot / shutdown)
+
+## Planned
+
+- **Screen locker + idle (swaylock + swayidle)** — `Super+L` to lock, autolock
+  on inactivity, and DPMS (screen off after N min). Nothing locks the screen
+  today. When added: `apt install swaylock swayidle`, start `swaylock` from
+  the power menu (already wired), and run `swayidle` in the background from
+  autostart.
 
 ## imv (image viewer)
 
