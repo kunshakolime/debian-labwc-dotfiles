@@ -69,7 +69,21 @@ Phone use: in noVNC set **Resize → Remote**; the desktop resizes to match the 
 
 Same as bare metal minus: wlsunset, bluez, libspa-0.2-bluetooth, brightnessctl, network-manager, wlr-randr, gnome-disk-utility
 
-Added: wayvnc, novnc, websockify, xwayland
+Added: wayvnc, novnc, websockify, xwayland, zram-tools
+
+**zram** is enabled automatically in VPS mode: compressed swap in RAM at 50% of
+installed memory (`ALGO=zstd`, `PERCENT=50`). It scales with the box (512 MiB on
+a 1 GiB VPS, 4 GiB on 8 GiB) and only consumes RAM as pages are actually swapped,
+so an idle zram costs nothing. This is the main thing that keeps a small VPS
+alive under memory spikes.
+
+Optional on bare metal (same mechanism, manual):
+
+```bash
+sudo apt install zram-tools
+# in /etc/default/zramswap: ALGO=zstd, PERCENT=50, PRIORITY=100
+sudo systemctl enable --now zramswap
+```
 
 ### Uninstall VPS setup
 

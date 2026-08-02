@@ -51,7 +51,7 @@ install_packages() {
     if [ "$MODE" = "desktop" ]; then
         pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility )
     else
-        pkgs+=( xwayland wayvnc novnc websockify openssl )
+        pkgs+=( xwayland wayvnc novnc websockify openssl zram-tools )
     fi
 
     sudo apt install -y "${pkgs[@]}"
@@ -149,6 +149,16 @@ EOF
 # ===== VPS-specific overrides (no display hardware) =====
 configure_vps() {
     echo "Configuring headless VNC setup..."
+
+    # zram — compressed swap in RAM, 50% of installed memory. PERCENT scales
+    # with the box (512 MiB on 1 GiB, 4 GiB on 8 GiB), so one config fits all.
+    # Higher PRIORITY means zram is used before any disk swap.
+    cat | sudo tee /etc/default/zramswap >/dev/null <<'EOF'
+ALGO=zstd
+PERCENT=50
+PRIORITY=100
+EOF
+    sudo systemctl enable --now zramswap
 
     # Headless environment
     cat >> "$HOME/.config/labwc/environment" <<'EOF'
