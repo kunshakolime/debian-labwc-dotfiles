@@ -73,7 +73,7 @@ install_packages() {
         jq curl btop nnn vim tmux fastfetch
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
-        vlc imv firefox-esr swappy cliphist
+        vlc loupe firefox-esr swappy cliphist
         davfs2 cifs-utils sshfs
     )
 
