@@ -141,6 +141,25 @@ idle) and **keep** (always connected). Flip anytime. WebDAV uses `davfs2`, SMB
 uses `cifs-utils`, SFTP uses `sshfs` (key login: `ssh-copy-id` once). No daemons
 run when a share isn't mounted.
 
+## Quick Share (packet)
+
+`setuplabwc.sh` installs **packet** (open-source Quick Share client) from a
+prebuilt `.deb` — no compiling. Bluetooth on both sides, visibility set to
+"Everyone nearby".
+
+**Limitation: it does not work with the phone as the hotspot** — Android's
+hotspot never forwards multicast (mDNS) to the phone itself, so it can't see the
+laptop (BLE presence shows, discovery stalls). Without a router, flip it: make
+the *laptop* the hotspot and connect the phone to it — works both ways.
+
+```bash
+nmcli connection add type wifi ifname wlo1 con-name packet-ap mode ap \
+  ssid packet-ap ipv4.method shared ipv6.method shared autoconnect no
+nmcli connection up packet-ap
+# afterwards, rejoin your phone's hotspot with:
+nmcli connection up <phone-hotspot-name>
+```
+
 ## Waybar clicks
 
 | Module | Click action |
