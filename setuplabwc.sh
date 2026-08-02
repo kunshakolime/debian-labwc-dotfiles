@@ -83,7 +83,9 @@ install_packages() {
         pkgs+=( xwayland wayvnc novnc websockify openssl zram-tools )
     fi
 
-    sudo apt install -y "${pkgs[@]}"
+    # --no-upgrade: install what's missing but never upgrade already-installed
+    # packages (firefox-esr, curl, ntfs-3g, ...) during setup.
+    sudo apt install --no-upgrade -y "${pkgs[@]}"
 }
 
 # JetBrainsMono Nerd Font — waybar configs use Nerd Font icons (CPU, memory, etc.)
