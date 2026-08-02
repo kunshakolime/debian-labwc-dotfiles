@@ -9,7 +9,6 @@ else
     echo "XKB_DEFAULT_LAYOUT=$layout" >> "$ENV_FILE"
 fi
 
-# Apply by restarting labwc
-labwc --reconfigure 2>/dev/null || labwc -r 2>/dev/null || {
-    notify-send "Keyboard Layout" "Set to $layout — restart labwc to apply"
-}
+# XKB_DEFAULT_LAYOUT is read from the environment file at compositor start,
+# so a full restart is required to apply it (reconfigure won't re-read it).
+notify-send "Keyboard Layout" "Set to $layout — restart labwc to apply"
