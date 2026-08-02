@@ -176,7 +176,7 @@ nmcli connection up <phone-hotspot-name>
 - `kb-layout` — cycle keyboard layout
 - `resolution` — display resolution picker
 - `power` — power menu (lock / suspend / reboot / shutdown)
-- `menu <launcher|clipboard|wallpaper|power>` — toggle the wofi menus (second press closes)
+- `menu <command>` — toggle any wofi-based menu (second press closes)
 - `mount-net` — add/remove/mount network shares (WebDAV, SMB, SFTP)
 
 ## Planned

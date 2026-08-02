@@ -1,26 +1,10 @@
 #!/bin/bash
-# Toggle a wofi-based menu: close it if one is already open, otherwise launch it.
+# Toggle a wofi-based command: close any open wofi menu, otherwise run it.
+# Usage: menu <command...>   e.g. menu wofi   /   menu control
 
 if pgrep -x wofi >/dev/null 2>&1; then
     pkill -x wofi
     exit 0
 fi
 
-case "$1" in
-    launcher)
-        wofi
-        ;;
-    clipboard)
-        cliphist list | wofi --dmenu --prompt="Clipboard" --width=40% --height=50% --location=center | cliphist decode | wl-copy
-        ;;
-    wallpaper)
-        wallpaper
-        ;;
-    power)
-        power
-        ;;
-    *)
-        echo "Usage: $0 {launcher|clipboard|wallpaper|power}" >&2
-        exit 1
-        ;;
-esac
+exec "$@"
