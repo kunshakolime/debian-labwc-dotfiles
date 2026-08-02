@@ -8,6 +8,11 @@ waybar &
 dunst &
 copyq --start-server &
 
+# lxpolkit — GUI sudo prompts (mounting drives, admin tools, etc.)
+if command -v lxpolkit > /dev/null 2>&1; then
+  lxpolkit &
+fi
+
 # VNC: wayvnc then noVNC websockify bridges (HTTPS + HTTP)
 # Only start if not already running, so a labwc restart can't double-bind
 # the ports (avoids "Address already in use").

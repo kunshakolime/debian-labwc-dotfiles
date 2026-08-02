@@ -19,3 +19,8 @@ wlsunset -l 52.5 -L 13.4 &
 
 # copyq — clipboard manager with history (runs in system tray)
 copyq --start-server &
+
+# lxpolkit — GUI sudo prompts (mounting drives, admin tools, etc.)
+if command -v lxpolkit > /dev/null 2>&1; then
+    lxpolkit &
+fi

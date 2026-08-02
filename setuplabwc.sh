@@ -43,7 +43,7 @@ install_packages() {
         dunst libnotify-bin copyq wl-clipboard grim slurp
         jq curl btop nnn vim tmux fastfetch numix-gtk-theme
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
-        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
+        xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
         vlc imv firefox-esr
     )
 
