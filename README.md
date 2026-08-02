@@ -102,7 +102,8 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `Tab` / `Shift` + `Tab` | Cycle windows |
 | `Super` + `1..9` | Switch workspace |
 | `Super` + `Shift` + `1..9` | Move window to workspace |
-| `Super` + `p` | Control center (clipboard, wallpaper, layout, power) |
+| `Super` + `p` | Control center (clipboard, wallpaper, layout, power, widgets) |
+| `Super` + `b` | Toggle the whole waybar (hide/show) |
 | `Super` + `PrtSc` / `Shift` + `PrtSc` | Full screenshot / area → edit in swappy |
 | `Super` + arrows | Snap window to edge |
 | Media keys | Volume / playback control |
@@ -174,7 +175,8 @@ nmcli connection up <phone-hotspot-name>
 - `kb-layout` — cycle keyboard layout
 - `resolution` — display resolution picker
 - `power` — power menu (lock / suspend / reboot / shutdown)
-- `control` — flat control center (clipboard, wallpaper, layout, resolution, night light, power); desktop-only entries auto-hide on VPS
+- `control` — flat control center (clipboard, wallpaper, layout, resolution, night light, waybar widgets, power); desktop-only entries auto-hide on VPS
+- `widgets` — toggle which waybar widgets show (edits `modules-*`, reloads via SIGUSR2)
 - `menu <command>` — toggle any wofi-based menu (second press closes)
 - `mount-net` — add/remove/mount network shares (WebDAV, SMB, SFTP)
 

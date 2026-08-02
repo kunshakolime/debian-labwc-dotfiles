@@ -30,6 +30,11 @@
       <action name="Execute" command="menu control" />
     </keybind>
 
+    <!-- Toggle the whole waybar (reclaim screen real estate) -->
+    <keybind key="W-b">
+      <action name="Execute" command="pkill -USR1 -x waybar" />
+    </keybind>
+
     <!-- Window cycling -->
     <keybind key="W-Tab">
       <action name="NextWindow" />

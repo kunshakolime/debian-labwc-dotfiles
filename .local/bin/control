@@ -8,6 +8,7 @@ command -v wallpaper >/dev/null 2>&1 && entries="$entries\nWallpaper"
 command -v kb-layout >/dev/null 2>&1 && entries="$entries\nKeyboard layout"
 command -v wlr-randr >/dev/null 2>&1 && entries="$entries\nResolution"
 command -v wlsunset >/dev/null 2>&1 && entries="$entries\nNight light"
+command -v widgets >/dev/null 2>&1 && entries="$entries\nWaybar widgets"
 
 power="Suspend\nReboot\nShutdown"
 command -v swaylock >/dev/null 2>&1 && power="Lock\n$power"
@@ -21,6 +22,7 @@ case "$choice" in
     "Keyboard layout")   kb-layout ;;
     "Resolution")        resolution ;;
     "Night light")       nightlight ;;
+    "Waybar widgets")    widgets ;;
     "Lock")              swaylock ;;
     "Suspend")           systemctl suspend ;;
     "Reboot")            systemctl reboot ;;

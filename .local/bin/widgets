@@ -1,0 +1,97 @@
+#!/bin/bash
+# Toggle waybar widgets (modules) to reclaim screen real estate.
+# Shows a wofi list of every widget defined in the waybar config; picking one
+# adds/removes it from the bar, then waybar reloads via SIGUSR2.
+# Only the modules-* lines are touched, so JSONC comments stay intact.
+
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/waybar/config.jsonc"
+
+declare -A LABELS=(
+    ["custom/launcher"]="Launcher"
+    ["wlr/taskbar"]="Taskbar"
+    ["clock"]="Clock"
+    ["custom/netspeed"]="Network speed"
+    ["custom/stats"]="CPU/RAM"
+    ["pulseaudio"]="Audio"
+    ["bluetooth"]="Bluetooth"
+    ["custom/nightlight"]="Night light"
+    ["battery"]="Battery"
+    ["network"]="Network"
+    ["tray"]="Tray"
+    ["custom/weather"]="Weather"
+)
+
+# waybar-config helper: list togglable widgets / test if one is shown / toggle it.
+wconf() {
+    python3 - "$CONF" "$@" <<'PY'
+import re, sys
+
+path, action = sys.argv[1], sys.argv[2]
+META = {"layer", "position", "height", "margin-top", "margin-bottom",
+        "margin-left", "margin-right", "spacing",
+        "modules-left", "modules-center", "modules-right"}
+
+lines = open(path).read().splitlines(keepends=True)
+text = "".join(lines)
+
+def arrays():
+    for m in re.finditer(r'"modules-(?:left|center|right)":\s*\[([^\]]*)\]', text):
+        yield m.group(1)
+
+if action == "list":
+    seen = set()
+    for a in arrays():
+        seen.update(re.findall(r'"([^"]+)"', a))
+    for m in re.finditer(r'^\s{4}"([^"]+)":', text, re.M):
+        if m.group(1) not in META:
+            seen.add(m.group(1))
+    print("\n".join(sorted(seen)))
+    sys.exit(0)
+
+module = sys.argv[3]
+if action == "enabled":
+    for a in arrays():
+        if '"%s"' % module in a:
+            sys.exit(0)
+    sys.exit(1)
+
+if action == "toggle":
+    want = all('"%s"' % module not in a for a in arrays())
+    for i, line in enumerate(lines):
+        m = re.match(r'^(\s*"modules-(?:left|center|right)":\s*\[)([^\]]*)(\],?\s*)$', line)
+        if not m:
+            continue
+        prefix, inner, suffix = m.groups()
+        entries = re.findall(r'"([^"]+)"', inner)
+        if want:
+            if module not in entries:
+                entries.append(module)
+        else:
+            entries = [e for e in entries if e != module]
+        lines[i] = prefix + ", ".join('"%s"' % e for e in entries) + suffix
+    open(path, "w").writelines(lines)
+    sys.exit(0)
+PY
+}
+
+while true; do
+    sel="$(for mod in $(wconf list); do
+        label="${LABELS[$mod]:-$mod}"
+        if wconf enabled "$mod"; then printf '✓ %s\n' "$label"; else printf '✗ %s\n' "$label"; fi
+    done
+    printf 'Done\n')"
+    sel="$(printf '%s\n' "$sel" | wofi --dmenu --prompt="Waybar widgets (✓ shown)" --width=25% --height=55% --location=center)"
+    [ -n "$sel" ] || break
+    [ "$sel" = "Done" ] && break
+
+    label="${sel#✓ }"
+    label="${label#✗ }"
+    mod=""
+    for k in "${!LABELS[@]}"; do
+        [ "${LABELS[$k]}" = "$label" ] && mod="$k"
+    done
+    [ -z "$mod" ] && mod="$label"
+    wconf toggle "$mod"
+done
+
+pkill -USR2 -x waybar 2>/dev/null
