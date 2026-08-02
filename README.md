@@ -2,16 +2,15 @@
 
 Labwc Wayland desktop config on Debian Trixie, managed with setup scripts.
 
-Two install modes:
+One script, two modes:
 - **Bare metal** (`setuplabwc.sh`) — full desktop with bluetooth, brightness, blue light filter
-- **VPS** (`setuplabwc-vps.sh`) — remote desktop via noVNC, no hardware deps
+- **VPS** (`setuplabwc.sh --vps <password>`) — remote desktop via noVNC, no hardware deps
 
 ## Contents
 
 | File/Dir | What it is |
 |---|---|
-| `setuplabwc.sh` | Bare metal setup: installs packages, copies configs, sets up fonts |
-| `setuplabwc-vps.sh` | VPS setup: noVNC remote desktop via distro wayvnc (no compiling); takes VNC password as argument |
+| `setuplabwc.sh` | Setup: bare metal by default, VPS with `--vps <password>` (noVNC via distro wayvnc, no compiling) |
 | `uninstall-vps.sh` | Removes VPS setup (VNC, noVNC, headless env, autostart) without removing packages |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
 | `.config/waybar/` | Waybar status bar (clock, network, audio, bluetooth, battery, taskbar, weather, stats) |
@@ -39,7 +38,7 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 
 ```bash
 sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
-/opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
+/opt/labwc_dotfiles/setuplabwc.sh --vps <your-vnc-password>
 ```
 
 Open `https://<vps-ip>:6080/vnc.html`, log in with username **user** and the password you set. Run `labwc` from a TTY to start the desktop. (noVNC auth requires HTTPS; a self-signed cert is generated — accept the warning.)
@@ -47,7 +46,7 @@ Open `https://<vps-ip>:6080/vnc.html`, log in with username **user** and the pas
 Alternatively, run it in a container (host stays clean, ports bind via host networking):
 
 ```bash
-podman run -d --name labwc-vps --network host -v /opt/labwc_dotfiles:/repo:ro debian:trixie bash -c 'apt-get update && apt-get install -y --no-install-recommends sudo xz-utils && HOME=/root /repo/setuplabwc-vps.sh <your-vnc-password> && export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p /tmp/xdg && chmod 700 /tmp/xdg && exec labwc'
+podman run -d --name labwc-vps --network host -v /opt/labwc_dotfiles:/repo:ro debian:trixie bash -c 'apt-get update && apt-get install -y --no-install-recommends sudo xz-utils && HOME=/root /repo/setuplabwc.sh --vps <your-vnc-password> && export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p /tmp/xdg && chmod 700 /tmp/xdg && exec labwc'
 ```
 
 Same URLs; `podman logs labwc-vps` shows progress, `podman stop labwc-vps` stops it.
