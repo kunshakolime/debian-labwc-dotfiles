@@ -22,18 +22,9 @@ if [ -f "$ENV_FILE" ]; then
     sed -i '/^WLR_HEADLESS_HEIGHT=/d' "$ENV_FILE"
 fi
 
-# --- Restore default autostart (no VNC) ---
-cat > "$HOME/.config/labwc/autostart" <<'AUTOSTART'
-#!/bin/bash
-
-# === What runs when labwc starts ===
-
-foot --server &
-swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
-waybar &
-dunst &
-copyq --start-server &
-AUTOSTART
+# --- Restore default autostart (no VNC, with wlsunset) from the repo ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cp "$SCRIPT_DIR/.config/labwc/autostart" "$HOME/.config/labwc/autostart"
 chmod +x "$HOME/.config/labwc/autostart"
 
 echo ""
