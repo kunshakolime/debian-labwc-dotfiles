@@ -23,6 +23,15 @@ One script, two modes:
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
 | `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard) |
+| `vendor/` | Offline assets: `fonts/` (JetBrainsMono Nerd Font) and `bluetui` binary |
+
+## Offline reinstall / new user
+
+Setup only talks to the network for `apt` packages — everything else ships in the
+repo, so you can re-run `setuplabwc.sh` any time without internet:
+- Fonts are installed from `vendor/fonts/`, bluetui from `vendor/bluetui`
+- No downloads during setup (the `*.tar.xz` in `.gitignore` no longer matters)
+
 
 ## Bare metal install
 

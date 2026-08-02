@@ -57,18 +57,21 @@ install_packages() {
 }
 
 # JetBrainsMono Nerd Font — waybar configs use Nerd Font icons (CPU, memory, etc.)
+# Bundled in vendor/fonts/ so setup never needs network access.
 install_nerd_font() {
     local font_dir="$HOME/.local/share/fonts"
+    local src_dir="$SCRIPT_DIR/vendor/fonts"
     if fc-list | grep -qi "JetBrainsMono.*Nerd" 2>/dev/null; then
         echo "JetBrainsMono Nerd Font already installed, skipping."
         return
     fi
+    if [ ! -f "$src_dir/JetBrainsMonoNerdFont-Regular.ttf" ]; then
+        echo "ERROR: fonts missing from $src_dir (clone must include vendor/). Aborting."
+        exit 1
+    fi
     mkdir -p "$font_dir"
-    local nerd_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz"
-    echo "Downloading JetBrainsMono Nerd Font (icons for waybar)..."
-    curl -L "$nerd_url" -o /tmp/JetBrainsMono.tar.xz
-    tar -xf /tmp/JetBrainsMono.tar.xz -C "$font_dir"
-    fc-cache -fv
+    cp "$src_dir"/*.ttf "$font_dir/"
+    fc-cache -f >/dev/null
     echo "Fonts installed."
 }
 
@@ -105,14 +108,17 @@ apply_configs() {
 }
 
 install_bluetui() {
-    local url="https://github.com/pythops/bluetui/releases/download/v0.8.1/bluetui-x86_64-linux-musl"
     local bin="/usr/local/bin/bluetui"
     if [ -f "$bin" ]; then
         echo "bluetui already installed, skipping."
         return
     fi
-    echo "Downloading bluetui..."
-    sudo curl -L "$url" -o "$bin"
+    if [ ! -f "$SCRIPT_DIR/vendor/bluetui" ]; then
+        echo "WARNING: vendor/bluetui not found, skipping bluetui install."
+        return
+    fi
+    echo "Installing bluetui from repo..."
+    sudo cp "$SCRIPT_DIR/vendor/bluetui" "$bin"
     sudo chmod +x "$bin"
     echo "bluetui installed."
 }
@@ -185,15 +191,18 @@ finish() {
     echo "Press Super+Space to launch apps (wofi)."
 }
 
-install_packages
-install_nerd_font
-apply_configs
-setup_path_and_nnn
+# SETUP_TEST=1 loads the functions only (no side effects) so they can be tested.
+if [ "${SETUP_TEST:-0}" != "1" ]; then
+    install_packages
+    install_nerd_font
+    apply_configs
+    setup_path_and_nnn
 
-if [ "$MODE" = "desktop" ]; then
-    install_bluetui
-else
-    configure_vps
+    if [ "$MODE" = "desktop" ]; then
+        install_bluetui
+    else
+        configure_vps
+    fi
+
+    finish
 fi
-
-finish
