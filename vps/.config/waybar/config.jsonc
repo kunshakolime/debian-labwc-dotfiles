@@ -1,0 +1,66 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 30,
+    "margin-top": 6,
+    "margin-bottom": 0,
+    "margin-left": 6,
+    "margin-right": 6,
+    "spacing": 8,
+
+    "modules-left": ["wlr/taskbar"],
+    "modules-center": ["clock"],
+    "modules-right": ["custom/netspeed", "custom/stats", "pulseaudio", "tray", "custom/weather"],
+
+    "wlr/taskbar": {
+        "format": "{name}",
+        "icon": true,
+        "icon-theme": "Adwaita",
+        "all-outputs": false,
+        "on-click": "activate",
+        "on-click-middle": "close"
+    },
+
+    "clock": {
+        "format": "{:%a %b %d  %H:%M}",
+        "tooltip-format": "{:%A, %B %d %Y  %I:%M %p}",
+        "interval": 60
+    },
+
+    "custom/stats": {
+        "exec": "$HOME/.config/waybar/stats.sh",
+        "interval": 3,
+        "on-click": "footclient -e btop"
+    },
+
+    "custom/netspeed": {
+        "exec": "$HOME/.config/waybar/netspeed.sh",
+        "interval": 3,
+        "on-click": "footclient -e btop"
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "  Muted",
+        "format-icons": {
+            "default": ["", ""]
+        },
+        "scroll-step": 5,
+        "on-click": "footclient -e pulsemixer",
+        "tooltip": false
+    },
+
+    "tray": {
+        "icon-size": 18,
+        "spacing": 6
+    },
+
+    "custom/weather": {
+        "format": "{}",
+        "exec": "curl -s 'wttr.in?format=1' 2>/dev/null || echo ''",
+        "interval": 1800,
+        "tooltip": true,
+        "tooltip-format": "Weather",
+        "exec-if": "ping -c 1 -W 1 wttr.in >/dev/null 2>&1"
+    }
+}

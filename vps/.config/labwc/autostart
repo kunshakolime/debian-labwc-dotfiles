@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# === What runs when labwc starts ===
+
+foot --server &
+swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
+waybar &
+dunst &
+copyq --start-server &
+
+# VNC: wayvnc then noVNC websockify bridges (HTTPS + HTTP)
+# Only start if not already running, so a labwc restart can't double-bind
+# the ports (avoids "Address already in use").
+if ! pgrep -x wayvnc > /dev/null 2>&1; then
+  wayvnc 0.0.0.0 5900 &
+fi
+sleep 1
+# Self-signed cert for the HTTPS endpoint (browser shows a one-time warning).
+# Replace with a real cert if you put this behind an HTTPS reverse proxy.
+CERT_DIR="$HOME/.config/wayvnc"
+if [ ! -f "$CERT_DIR/cert.pem" ]; then
+  openssl req -x509 -nodes -newkey rsa:2048 -days 3650 \
+    -keyout "$CERT_DIR/key.pem" -out "$CERT_DIR/cert.pem" \
+    -subj "/CN=noVNC" >/dev/null 2>&1
+fi
+# HTTPS: works in any browser (WebCrypto needs a secure context).
+if ! pgrep -f "websockify.*6080" > /dev/null 2>&1; then
+  websockify --cert "$CERT_DIR/cert.pem" --key "$CERT_DIR/key.pem" \
+    --web /usr/share/novnc 6080 localhost:5900 &
+fi
+# Plain HTTP: for localhost or as the backend for an HTTPS reverse proxy.
+if ! pgrep -f "websockify.*6081" > /dev/null 2>&1; then
+  websockify --web /usr/share/novnc 6081 localhost:5900 &
+fi
+
+# Audio: PipeWire stack (systemd user units are skipped as root via
+# ConditionUser=!root, so start the daemons directly).
+if ! pgrep -x pipewire > /dev/null 2>&1; then
+  pipewire &
+fi
+if ! pgrep -x wireplumber > /dev/null 2>&1; then
+  wireplumber &
+fi
+if ! pgrep -x pipewire-pulse > /dev/null 2>&1; then
+  pipewire-pulse &
+fi
