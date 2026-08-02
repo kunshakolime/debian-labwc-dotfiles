@@ -41,7 +41,7 @@ install_packages() {
     local pkgs=(
         labwc waybar wofi foot fonts-font-awesome swaybg
         dunst libnotify-bin wl-clipboard grim slurp
-        jq curl btop nnn vim tmux fastfetch numix-gtk-theme
+        jq curl btop nnn vim tmux fastfetch
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
         vlc imv firefox-esr swappy cliphist
