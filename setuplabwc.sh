@@ -88,6 +88,7 @@ fi
 # Apply config files
 echo "Applying configs..."
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+mkdir -p "$HOME/.config"
 cp -r "$SCRIPT_DIR/.config/labwc"   "$HOME/.config/"
 cp -r "$SCRIPT_DIR/.config/waybar"  "$HOME/.config/"
 chmod +x "$HOME/.config/waybar/stats.sh"

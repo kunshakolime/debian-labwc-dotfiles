@@ -67,11 +67,8 @@ sudo apt install -y \
   xdg-desktop-portal-wlr \
   vlc \
   imv \
-  firefox-esr
-
-# Build a recent wayvnc from source if the distro's version is < 0.10
-# (needed for allow_broken_crypto / password-only noVNC auth).
-"$SCRIPT_DIR/build-wayvnc.sh"
+  firefox-esr \
+  openssl
 
 # JetBrainsMono Nerd Font
 FONT_DIR="$HOME/.local/share/fonts"
@@ -89,6 +86,7 @@ fi
 
 # ===== Apply configs =====
 echo "Applying configs..."
+mkdir -p "$HOME/.config"
 
 # Copy base configs (same as main setup)
 cp -r "$SCRIPT_DIR/.config/labwc"   "$HOME/.config/"
@@ -122,31 +120,13 @@ EOF
 # ===== VNC password =====
 mkdir -p "$HOME/.vnc" "$HOME/.config/wayvnc"
 
-# allow_broken_crypto (classic VNC password auth, password-only noVNC prompt)
-# only exists in wayvnc >= 0.10 — set it conditionally so the config still
-# works with older wayvnc (which falls back to AppleDH auth).
-version_ge() {
-    local va=(${1//./ }) vb=(${2//./ })
-    local i
-    for i in 0 1 2; do
-        local na="${va[$i]:-0}" nb="${vb[$i]:-0}"
-        if [ "$na" -lt "$nb" ]; then return 1; fi
-        if [ "$na" -gt "$nb" ]; then return 0; fi
-    done
-    return 0
-}
-WAYVNC_VERSION="$(wayvnc --version 2>/dev/null | head -1 | awk '{print $2}')"
-BROKEN_CRYPTO_LINE=""
-if [ -n "$WAYVNC_VERSION" ] && version_ge "$WAYVNC_VERSION" "0.10.0"; then
-    BROKEN_CRYPTO_LINE="allow_broken_crypto=true"
-fi
-
+# Distro wayvnc (no auth reordering patch): noVNC shows a username+password
+# prompt — log in with username "user" and the password set below.
 cat > "$HOME/.config/wayvnc/config" <<EOF
 address=0.0.0.0
 port=5900
 enable_auth=true
 relax_encryption=true
-$BROKEN_CRYPTO_LINE
 username=user
 password=$VNC_PASSWORD
 EOF
@@ -168,15 +148,29 @@ waybar &
 dunst &
 copyq --start-server &
 
-# VNC: wayvnc then noVNC websockify bridge
+# VNC: wayvnc then noVNC websockify bridges (HTTPS + HTTP)
 # Only start if not already running, so a labwc restart can't double-bind
 # the ports (avoids "Address already in use").
 if ! pgrep -x wayvnc > /dev/null 2>&1; then
   wayvnc 0.0.0.0 5900 &
 fi
 sleep 1
+# Self-signed cert for the HTTPS endpoint (browser shows a one-time warning).
+# Replace with a real cert if you put this behind an HTTPS reverse proxy.
+CERT_DIR="$HOME/.config/wayvnc"
+if [ ! -f "$CERT_DIR/cert.pem" ]; then
+  openssl req -x509 -nodes -newkey rsa:2048 -days 3650 \
+    -keyout "$CERT_DIR/key.pem" -out "$CERT_DIR/cert.pem" \
+    -subj "/CN=noVNC" >/dev/null 2>&1
+fi
+# HTTPS: works in any browser (WebCrypto needs a secure context).
 if ! pgrep -f "websockify.*6080" > /dev/null 2>&1; then
-  websockify --web /usr/share/novnc 6080 localhost:5900 &
+  websockify --cert "$CERT_DIR/cert.pem" --key "$CERT_DIR/key.pem" \
+    --web /usr/share/novnc 6080 localhost:5900 &
+fi
+# Plain HTTP: for localhost or as the backend for an HTTPS reverse proxy.
+if ! pgrep -f "websockify.*6081" > /dev/null 2>&1; then
+  websockify --web /usr/share/novnc 6081 localhost:5900 &
 fi
 
 # Audio: PipeWire stack (systemd user units are skipped as root via
@@ -431,8 +425,10 @@ echo ""
 echo "===== VPS/Container setup complete ====="
 echo ""
 echo "VNC password set."
-echo "noVNC: open http://<your-vps-ip>:6080/vnc.html in a browser (password-only prompt)"
-echo "VNC client: connect to <your-vps-ip>:5900 with the password you set"
+echo "noVNC (HTTPS - works in any browser): https://<your-vps-ip>:6080/vnc.html"
+echo "  login with username 'user' and the password you set (accept the self-signed cert warning)"
+echo "noVNC (HTTP - localhost or HTTPS reverse-proxy backend): http://<your-vps-ip>:6081/vnc.html"
+echo "VNC client: connect to <your-vps-ip>:5900 (username: user) with the password you set"
 echo "Audio: PipeWire stack starts with labwc (pulsemixer widget works)"
 echo ""
 echo "Reboot or run 'labwc' from tty1 to start your desktop."

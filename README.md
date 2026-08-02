@@ -11,8 +11,7 @@ Two install modes:
 | File/Dir | What it is |
 |---|---|
 | `setuplabwc.sh` | Bare metal setup: installs packages, copies configs, sets up fonts |
-| `setuplabwc-vps.sh` | VPS setup: adds noVNC, sound, strips hardware deps. Takes VNC password as argument |
-| `build-wayvnc.sh` | Builds wayvnc >= 0.10 from source (for Trixie's old 0.9.1); no-op if not needed |
+| `setuplabwc-vps.sh` | VPS setup: noVNC remote desktop via distro wayvnc (no compiling); takes VNC password as argument |
 | `uninstall-vps.sh` | Removes VPS setup (VNC, noVNC, headless env, autostart) without removing packages |
 | `.config/labwc/` | Labwc window manager config (keybinds, theme, autostart) |
 | `.config/waybar/` | Waybar status bar (clock, network, audio, bluetooth, battery, taskbar, weather, stats) |
@@ -38,24 +37,24 @@ labwc, waybar, wofi, foot, swaybg, wlsunset, dunst, copyq, wl-clipboard, grim, s
 
 ## VPS install
 
-Sets up labwc with noVNC (browser-based VNC). Note: VNC has no audio channel — sound plays from the machine's own output only (PipeWire stack starts from the labwc autostart).
-
 ```bash
 sudo git clone https://github.com/kunshakolime/debian-labwc-dotfiles.git /opt/labwc_dotfiles
 /opt/labwc_dotfiles/setuplabwc-vps.sh <your-vnc-password>
 ```
 
-After setup, open `http://<vps-ip>:6080/vnc.html` in a browser and enter the VNC password. Run `labwc` from a TTY to start the desktop.
+Open `https://<vps-ip>:6080/vnc.html`, log in with username **user** and the password you set. Run `labwc` from a TTY to start the desktop. (noVNC auth requires HTTPS; a self-signed cert is generated — accept the warning.)
 
-Phone use: in noVNC click the settings gear and set **Resize → Remote**. The headless desktop is resized on demand — rotate the phone to portrait and the VNC server (wayvnc 0.10.1, `enable_resizing` on by default) resizes the output to match the phone's viewport, so it fills the screen instead of being a tiny landscape window.
+Alternatively, run it in a container (host stays clean, ports bind via host networking):
 
-The patched wayvnc build (or Forky's 0.10.1 built by `build-wayvnc.sh`) offers classic VNC password auth first, so noVNC shows a simple password-only prompt over plain HTTP — no self-signed cert warning, no username.
+```bash
+podman run -d --name labwc-vps --network host -v /opt/labwc_dotfiles:/repo:ro debian:trixie bash -c 'apt-get update && apt-get install -y --no-install-recommends sudo xz-utils && HOME=/root /repo/setuplabwc-vps.sh <your-vnc-password> && export XDG_RUNTIME_DIR=/tmp/xdg && mkdir -p /tmp/xdg && chmod 700 /tmp/xdg && exec labwc'
+```
 
-### wayvnc from source (Debian Trixie)
+Same URLs; `podman logs labwc-vps` shows progress, `podman stop labwc-vps` stops it.
 
-Trixie ships wayvnc 0.9.1, which lacks `allow_broken_crypto`. `build-wayvnc.sh` compiles aml → neatvnc → wayvnc 0.10.1 into `/usr/local` (pinned release tags, no FFmpeg needed) and is called automatically by `setuplabwc-vps.sh` when the installed wayvnc is older than 0.10 (or a previous source build is absent). Re-running it is a no-op once the patched build is installed; `./build-wayvnc.sh --force` rebuilds anyway.
+Also started: `http://<vps-ip>:6081/vnc.html` (plain HTTP, for localhost or as an HTTPS reverse-proxy backend — proxy `/` and `/websockify` to `http://127.0.0.1:6081`).
 
-It also applies `patches/neatvnc-vnc-auth-first.diff`, which makes neatvnc offer classic VNC auth (type 2) first. Upstream lists RSA-AES/AppleDH before it, so noVNC picks those and shows a username+password prompt.
+Phone use: in noVNC set **Resize → Remote**; the desktop resizes to match the viewport.
 
 ### Packages (VPS)
 
