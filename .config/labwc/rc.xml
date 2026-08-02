@@ -19,6 +19,11 @@
       <action name="Execute" command="clipboard" />
     </keybind>
 
+    <!-- Wallpaper picker + rotation -->
+    <keybind key="W-w">
+      <action name="Execute" command="wallpaper" />
+    </keybind>
+
     <!-- Terminal -->
     <keybind key="W-Return">
       <action name="Execute" command="footclient" />

@@ -5,8 +5,8 @@
 # foot --server — terminal daemon (makes footclient launches instant)
 foot --server &
 
-# swaybg — wallpaper
-swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
+# wallpaper — restores saved wallpaper and rotation from wallpaper.conf
+"$HOME/.local/bin/wallpaper" --restore &
 
 # waybar — the top/bottom status bar
 waybar &

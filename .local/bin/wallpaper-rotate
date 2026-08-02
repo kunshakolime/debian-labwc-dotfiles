@@ -1,0 +1,70 @@
+#!/bin/bash
+# Wallpaper rotation loop. Swaps the swaybg image every ROTATE_INTERVAL seconds.
+# Re-reads ~/.config/wallpaper.conf each cycle, so changing the interval or the
+# rotation set takes effect without a restart. Exits when rotation is off.
+
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/wallpaper.conf"
+WALL_DIR="$HOME/Pictures/Wallpapers"
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/wallpaper-rotate.pid"
+
+# single instance: give up if another loop is already running
+if [ -f "$PIDFILE" ]; then
+    other="$(cat "$PIDFILE" 2>/dev/null)"
+    if [ -n "$other" ] && [ "$other" != "$$" ] && kill -0 "$other" 2>/dev/null; then
+        exit 0
+    fi
+fi
+echo $$ > "$PIDFILE"
+trap 'rm -f "$PIDFILE"' EXIT
+
+# keep in sync with the save_conf() in wallpaper
+save_conf() {
+    {
+        printf 'WALLPAPER=%q\n' "$WALLPAPER"
+        printf 'ROTATE_INTERVAL=%s\n' "$ROTATE_INTERVAL"
+        printf 'ROTATE_SET=('
+        local n
+        for n in "${ROTATE_SET[@]}"; do
+            printf ' %q' "$n"
+        done
+        printf ')\n'
+    } > "$CONF"
+}
+
+rotate_set_files() {
+    local n
+    for n in "${ROTATE_SET[@]}"; do
+        [ -f "$WALL_DIR/$n" ] && printf '%s\n' "$WALL_DIR/$n"
+    done
+}
+
+while true; do
+    [ -f "$CONF" ] || exit 0
+    . "$CONF"
+    [ "${ROTATE_INTERVAL:-0}" -gt 0 ] || exit 0
+    sleep "$ROTATE_INTERVAL"
+
+    # re-read: the interval, set or wallpaper may have changed while sleeping
+    [ -f "$CONF" ] || exit 0
+    . "$CONF"
+    [ "${ROTATE_INTERVAL:-0}" -gt 0 ] || exit 0
+
+    mapfile -t list < <(rotate_set_files)
+    [ "${#list[@]}" -ge 2 ] || continue
+
+    idx=-1
+    for i in "${!list[@]}"; do
+        [ "${list[$i]}" = "${WALLPAPER:-}" ] && { idx="$i"; break; }
+    done
+    if [ "$idx" -eq -1 ]; then
+        next="${list[0]}"
+    else
+        next="${list[$(((idx + 1) % ${#list[@]}))]}"
+    fi
+
+    pkill -x swaybg 2>/dev/null
+    swaybg --image "$next" --mode fill &
+
+    WALLPAPER="$next"
+    save_conf
+done

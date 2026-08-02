@@ -22,7 +22,7 @@ One script, two modes:
 | `.config/gtk-4.0/` | GTK4 dark theme (Numix) |
 | `.config/mimeapps.list` | Default apps: imv for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper) |
 | `vendor/` | Offline assets: `fonts/` (JetBrainsMono Nerd Font) and `bluetui` binary |
 
 ## Offline reinstall / new user
@@ -91,11 +91,24 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart. Does 
 | `Super` + `Shift` + `1..9` | Move window to workspace |
 | `Super` + `p` | Power menu (lock / suspend / reboot / shutdown) |
 | `Super` + `v` | Clipboard history (cliphist + wofi) |
+| `Super` + `w` | Wallpaper picker + rotation (wofi) |
 | `Super` + `PrtSc` / `Shift` + `PrtSc` | Full screenshot / area → edit in swappy |
 | `Super` + `Up` / `Down` | Volume ±5% |
 | `Super` + `m` | Toggle mute |
 | Media keys | Playback control |
 | Brightness keys | Backlight ±2% *(bare metal only)* |
+
+## Wallpaper
+
+`Super+w` opens a wofi picker (also in the app menu / right-click menu):
+
+- Pick any image in `Pictures/Wallpapers/` — applied instantly, remembered at next login
+- **Rotation**: `Rotate: off` / every 10 min / 30 min / 1 hour
+- **Rotation set…**: toggle ✓/✗ to choose *which* wallpapers rotate (defaults to all)
+
+State lives in `~/.config/wallpaper.conf` (`WALLPAPER`, `ROTATE_INTERVAL`, `ROTATE_SET`).
+Rotation runs as a tiny `sleep` loop (`wallpaper-rotate`) — no extra daemon. Drop new
+wallpapers into `Pictures/Wallpapers/` and add them to the rotation set from the menu.
 
 ## Waybar clicks
 

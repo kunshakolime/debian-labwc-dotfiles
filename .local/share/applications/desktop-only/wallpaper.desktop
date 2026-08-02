@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Wallpaper
+Comment=Pick wallpaper or configure rotation
+Exec=wallpaper
+Icon=image
+Type=Application
+Categories=Utility;
+NoDisplay=false

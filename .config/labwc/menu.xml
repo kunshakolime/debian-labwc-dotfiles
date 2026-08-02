@@ -11,6 +11,9 @@
     <item label="File Manager (nnn)">
       <action name="Execute" command="footclient nnn" />
     </item>
+    <item label="Wallpaper (picker)">
+      <action name="Execute" command="wallpaper" />
+    </item>
     <separator />
     <item label="Power">
       <action name="Execute" command="power" />

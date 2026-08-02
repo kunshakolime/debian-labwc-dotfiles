@@ -1,0 +1,208 @@
+#!/bin/bash
+# Wallpaper picker + rotation controller.
+#
+#   wallpaper            — open the wofi picker menu
+#   wallpaper --restore  — apply saved wallpaper/rotation at login (called from autostart)
+#
+# State lives in ~/.config/wallpaper.conf (created on first use):
+#   WALLPAPER=/abs/path/to/current.png
+#   ROTATE_INTERVAL=600  (seconds; 0 = rotation off)
+#   ROTATE_SET=("a.png" "b.png")  — filenames to rotate; empty = nothing rotates
+
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/wallpaper.conf"
+WALL_DIR="$HOME/Pictures/Wallpapers"
+PIDFILE="${XDG_RUNTIME_DIR:-/tmp}/wallpaper-rotate.pid"
+
+load_conf() {
+    WALLPAPER=""
+    ROTATE_INTERVAL=0
+    ROTATE_SET=()
+    if [ -f "$CONF" ]; then
+        . "$CONF"
+    else
+        # first run — wallpaper = first image, rotation set = everything
+        for f in "$WALL_DIR"/*; do
+            [ -f "$f" ] || continue
+            [ -z "$WALLPAPER" ] && WALLPAPER="$f"
+            ROTATE_SET+=("$(basename "$f")")
+        done
+    fi
+    if [ ! -f "$WALLPAPER" ]; then
+        for f in "$WALL_DIR"/*; do
+            [ -f "$f" ] && { WALLPAPER="$f"; break; }
+        done
+    fi
+    save_conf
+}
+
+# keep in sync with the save_conf() in wallpaper-rotate
+save_conf() {
+    {
+        printf 'WALLPAPER=%q\n' "$WALLPAPER"
+        printf 'ROTATE_INTERVAL=%s\n' "$ROTATE_INTERVAL"
+        printf 'ROTATE_SET=('
+        local n
+        for n in "${ROTATE_SET[@]}"; do
+            printf ' %q' "$n"
+        done
+        printf ')\n'
+    } > "$CONF"
+}
+
+apply_wallpaper() {
+    pkill -x swaybg 2>/dev/null
+    swaybg --image "$WALLPAPER" --mode fill &
+}
+
+stop_rotation() {
+    [ -f "$PIDFILE" ] || return 0
+    local pid
+    pid="$(cat "$PIDFILE" 2>/dev/null)"
+    rm -f "$PIDFILE"
+    [ -n "$pid" ] && kill "$pid" 2>/dev/null
+}
+
+start_rotation() {
+    if [ -f "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
+        return 0
+    fi
+    rm -f "$PIDFILE"
+    "$HOME/.local/bin/wallpaper-rotate" >/dev/null 2>&1 &
+    echo $! > "$PIDFILE"
+    disown
+}
+
+interval_label() {
+    case "$ROTATE_INTERVAL" in
+        600)  echo "10 minutes" ;;
+        1800) echo "30 minutes" ;;
+        3600) echo "1 hour" ;;
+        *)    echo "$ROTATE_INTERVAL seconds" ;;
+    esac
+}
+
+set_interval() {
+    ROTATE_INTERVAL="$1"
+    save_conf
+    if [ "$1" -gt 0 ]; then
+        start_rotation
+        notify-send -a wallpaper -u low "Wallpaper" "Rotating every $(interval_label)"
+    else
+        stop_rotation
+        notify-send -a wallpaper -u low "Wallpaper" "Rotation off"
+    fi
+}
+
+set_wallpaper() {
+    WALLPAPER="$1"
+    save_conf
+    apply_wallpaper
+    notify-send -a wallpaper -u low "Wallpaper" "$(basename "$1")"
+}
+
+in_set() {
+    local n
+    for n in "${ROTATE_SET[@]}"; do
+        [ "$n" = "$1" ] && return 0
+    done
+    return 1
+}
+
+remove_from_set() {
+    local out=() n
+    for n in "${ROTATE_SET[@]}"; do
+        [ "$n" != "$1" ] && out+=("$n")
+    done
+    ROTATE_SET=("${out[@]}")
+}
+
+build_entries() {
+    local interval=""
+    case "$ROTATE_INTERVAL" in
+        600)  interval="Rotate: every 10 minutes" ;;
+        1800) interval="Rotate: every 30 minutes" ;;
+        3600) interval="Rotate: every 1 hour" ;;
+    esac
+    for opt in "Rotate: off" "Rotate: every 10 minutes" "Rotate: every 30 minutes" "Rotate: every 1 hour"; do
+        if [ "$opt" = "$interval" ]; then
+            printf '▶ %s\n' "$opt"
+        else
+            printf '%s\n' "$opt"
+        fi
+    done
+    printf 'Rotation set…\n'
+    local cur n
+    cur="$(basename "$WALLPAPER")"
+    for f in "$WALL_DIR"/*; do
+        [ -f "$f" ] || continue
+        n="$(basename "$f")"
+        if [ "$n" = "$cur" ]; then
+            printf '▶ %s\n' "$n"
+        else
+            printf '%s\n' "$n"
+        fi
+    done
+}
+
+manage_set() {
+    local sel n
+    while true; do
+        sel="$(for f in "$WALL_DIR"/*; do
+            [ -f "$f" ] || continue
+            n="$(basename "$f")"
+            if in_set "$n"; then printf '✓ %s\n' "$n"; else printf '✗ %s\n' "$n"; fi
+        done
+        printf 'Done\n')"
+        sel="$(printf '%s\n' "$sel" | wofi --dmenu --prompt="Rotation set (✓ rotate)" --width=45% --height=60% --location=center)"
+        [ -n "$sel" ] || break
+        [ "$sel" = "Done" ] && break
+        n="${sel#✓ }"
+        n="${n#✗ }"
+        if in_set "$n"; then
+            remove_from_set "$n"
+        else
+            ROTATE_SET+=("$n")
+        fi
+        save_conf
+    done
+}
+
+restore() {
+    WALLPAPER="$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png"
+    ROTATE_INTERVAL=0
+    [ -f "$CONF" ] && . "$CONF"
+    if [ ! -f "$WALLPAPER" ]; then
+        for f in "$WALL_DIR"/*; do
+            [ -f "$f" ] && { WALLPAPER="$f"; break; }
+        done
+    fi
+    [ -f "$WALLPAPER" ] && apply_wallpaper
+    if [ "${ROTATE_INTERVAL:-0}" -gt 0 ]; then
+        start_rotation
+    fi
+}
+
+# run the menu/restore only when executed, not when sourced (allows testing)
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+    if [ "${1:-}" = "--restore" ]; then
+        restore
+        exit 0
+    fi
+
+    load_conf
+
+    sel="$(build_entries | wofi --dmenu --prompt="Wallpaper" --width=45% --height=60% --location=center)"
+    [ -n "$sel" ] || exit 0
+    sel="${sel#▶ }"
+
+    case "$sel" in
+        "Rotate: off")              set_interval 0 ;;
+        "Rotate: every 10 minutes") set_interval 600 ;;
+        "Rotate: every 30 minutes") set_interval 1800 ;;
+        "Rotate: every 1 hour")     set_interval 3600 ;;
+        "Rotation set…")            manage_set ;;
+        *)
+            [ -f "$WALL_DIR/$sel" ] && set_wallpaper "$WALL_DIR/$sel"
+            ;;
+    esac
+fi
