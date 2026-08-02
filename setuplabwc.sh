@@ -5,35 +5,28 @@ set -e
 #
 #   Desktop:  ./setuplabwc.sh
 #   VPS:      ./setuplabwc.sh --vps <vnc-password>
-#   Skip apt update:  ./setuplabwc.sh [--vps <vnc-password>] --no-update
 #
 # VPS mode adds noVNC (browser VNC), sound forwarding and screenshots, and
 # drops hardware-dependent pieces (brightness, bluetooth, blue light filter).
 
 MODE="desktop"
 VNC_PASSWORD=""
-NO_UPDATE=0
 
-while [ $# -gt 0 ]; do
-    case "$1" in
-        --vps)
-            MODE="vps"
-            VNC_PASSWORD="${2:-}"
-            shift
-            ;;
-        --no-update)
-            NO_UPDATE=1
-            ;;
-        *)
-            echo "Usage: $0 [--vps <vnc-password>] [--no-update]"
-            exit 1
-            ;;
-    esac
-    shift
-done
+case "$1" in
+    --vps)
+        MODE="vps"
+        VNC_PASSWORD="${2:-}"
+        ;;
+    "")
+        ;;
+    *)
+        echo "Usage: $0 [--vps <vnc-password>]"
+        exit 1
+        ;;
+esac
 
 if [ "$MODE" = "vps" ] && [ -z "$VNC_PASSWORD" ]; then
-    echo "Usage: $0 --vps <vnc-password> [--no-update]"
+    echo "Usage: $0 --vps <vnc-password>"
     echo "  The password protects access to the noVNC web interface."
     exit 1
 fi
@@ -88,13 +81,6 @@ install_packages() {
         pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility )
     else
         pkgs+=( xwayland wayvnc novnc websockify openssl zram-tools )
-    fi
-
-    if [ "$NO_UPDATE" -eq 0 ]; then
-        echo "Updating package lists (apt update)..."
-        sudo apt update
-    else
-        echo "Skipping apt update (--no-update)."
     fi
 
     sudo apt install -y "${pkgs[@]}"
