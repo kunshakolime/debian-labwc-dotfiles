@@ -36,7 +36,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # ===== Packages =====
 # VPS-only:  xwayland, wayvnc, novnc, websockify, openssl
 # Desktop-only: wlsunset, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
-#               network-manager, network-manager-gnome, wlr-randr
+#               network-manager, network-manager-gnome, wlr-randr,
+#               gnome-disk-utility
 install_packages() {
     local pkgs=(
         labwc waybar wofi foot fonts-font-awesome swaybg
@@ -48,7 +49,7 @@ install_packages() {
     )
 
     if [ "$MODE" = "desktop" ]; then
-        pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr )
+        pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility )
     else
         pkgs+=( xwayland wayvnc novnc websockify openssl )
     fi
