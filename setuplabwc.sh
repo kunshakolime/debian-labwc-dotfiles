@@ -98,7 +98,8 @@ apply_configs() {
         cp "$SCRIPT_DIR/.local/bin/volume"     "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/kb-layout"  "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/resolution" "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution"
+        cp "$SCRIPT_DIR/.local/bin/power"      "$HOME/.local/bin/"
+        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power"
     fi
 }
 

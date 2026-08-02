@@ -24,6 +24,11 @@
       <action name="Close" />
     </keybind>
 
+    <!-- Power menu -->
+    <keybind key="W-p">
+      <action name="Execute" command="power" />
+    </keybind>
+
     <!-- Window cycling -->
     <keybind key="W-Tab">
       <action name="NextWindow" />

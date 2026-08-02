@@ -12,6 +12,9 @@
       <action name="Execute" command="footclient nnn" />
     </item>
     <separator />
+    <item label="Power">
+      <action name="Execute" command="power" />
+    </item>
     <item label="Reconfigure">
       <action name="Reconfigure" />
     </item>
