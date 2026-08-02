@@ -4,3 +4,11 @@ case "$1" in
     down) brightnessctl set 2%- ;;
     *) echo "usage: brightness {up|down}" ;;
 esac
+
+level=$(brightnessctl get -P 2>/dev/null)
+[ -n "$level" ] && dunstify -h string:x-dunst-stack-tag:brightness \
+    -h int:value:"$level" \
+    -a "brightness" \
+    -u low \
+    "Brightness" \
+    "$level%"
