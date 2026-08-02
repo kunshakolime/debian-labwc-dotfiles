@@ -12,7 +12,7 @@
 
     "modules-left": ["custom/launcher", "wlr/taskbar"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/netspeed", "custom/stats", "network", "pulseaudio", "bluetooth", "custom/nightlight", "battery", "tray", "custom/weather"],
+    "modules-right": ["custom/netspeed", "custom/stats", "pulseaudio", "bluetooth", "custom/nightlight", "battery", "network", "tray", "custom/weather"],
 
     // --- Launcher (opens the wofi app menu, same as Super+Space) ---
     "custom/launcher": {
@@ -54,12 +54,12 @@
         "on-click": "footclient -e btop"
     },
 
-    // --- Network ---
+    // --- Network (bare applet-style icon; nm-applet stays in the tray) ---
     "network": {
-        "format-wifi": "  {essid} ({signalStrength}%)",
-        "format-ethernet": "  Connected",
-        "format-disconnected": "  Disconnected",
-        "tooltip-format-wifi": "IP: {ipaddr}",
+        "format-wifi": "",
+        "format-ethernet": "",
+        "format-disconnected": "",
+        "tooltip-format-wifi": "{essid}  {signalStrength}%  IP: {ipaddr}",
         "tooltip-format-ethernet": "IP: {ipaddr}",
         "interval": 30,
         "on-click": "footclient -e nmtui"
