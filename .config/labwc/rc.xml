@@ -90,12 +90,12 @@
       <action name="Execute" command="brightness down" />
     </keybind>
 
-    <!-- Night light warmth (Super + F9/F10) -->
+    <!-- Night light warmth (Super + F9 = cooler, F10 = warmer) -->
     <keybind key="W-F9">
-      <action name="Execute" command="nightlight warmer" />
+      <action name="Execute" command="nightlight cooler" />
     </keybind>
     <keybind key="W-F10">
-      <action name="Execute" command="nightlight cooler" />
+      <action name="Execute" command="nightlight warmer" />
     </keybind>
 
     <!-- Media controls -->
