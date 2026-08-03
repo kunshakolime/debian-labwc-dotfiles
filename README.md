@@ -21,7 +21,7 @@ One script, two modes:
 | `.config/dunst/` | Notification daemon config |
 | `.config/gtk-3.0/` | GTK3 dark theme (Adwaita dark) |
 | `.config/gtk-4.0/` | GTK4 dark theme (Adwaita dark) |
-| `.config/mimeapps.list` | Default apps: imv for images |
+| `.config/mimeapps.list` | Default apps: Loupe for images |
 | `.local/share/applications/` | Custom desktop entries |
 | `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper, mount-net) |
 | `vendor/` | Offline assets: `fonts/` (JetBrainsMono Nerd Font) and `bluetui` binary |
@@ -43,7 +43,7 @@ brightness keys). Running as root sets up `/root` instead. Reset with `uninstall
 
 ### Packages (bare metal)
 
-labwc, waybar, fuzzel, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, imv, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
+labwc, waybar, fuzzel, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
 
 ## VPS
 
@@ -175,24 +175,9 @@ nmcli connection up <phone-hotspot-name>
   on inactivity, DPMS screen-off. Nothing locks today; `swaylock` is already
   wired into the power menu.
 
-## imv (image viewer)
+## Image viewer
 
-| Keys | Action |
-|------|--------|
-| `←` / `→` | Previous / next image |
-| `↑` / `↓` | Zoom in / out |
-| `i` / `o` | Zoom in / out |
-| `+` / `-` | Zoom in / out |
-| `j` / `k` | Pan up / down |
-| `h` / `l` | Pan left / right |
-| `q` | Quit |
-| `f` | Fullscreen |
-| `x` | Close current image |
-| `r` | Reset zoom and pan |
-| `a` | Actual size |
-| `c` | Center image |
-| `d` | Toggle info overlay |
-| `s` / `S` | Next scaling / upscaling mode |
-| `p` | Print to stdout |
+Images open in **Loupe** (GNOME image viewer), set as default in
+`.config/mimeapps.list`.
 
 Run `n` instead of `nnn` to auto-cd to last directory on quit.
