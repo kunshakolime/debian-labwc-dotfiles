@@ -218,16 +218,33 @@ EOF
     fi
 }
 
-# ===== sshm password auto-fill (user-level, pulled from debian-13-tricks) =====
+# ===== sshm password auto-fill (user-level, vendored in vendor/sshm-askpass) =====
 setup_sshm_askpass() {
+    local script="$SCRIPT_DIR/vendor/sshm-askpass/setup-sshm-askpass.sh"
+    if [ -f "$script" ]; then
+        bash "$script"
+        echo "sshm-askpass setup complete."
+    else
+        echo "warning: vendor/sshm-askpass/setup-sshm-askpass.sh not found — skipping." >&2
+    fi
+}
+
+# ===== nopasswd toggle (system-wide, pulled remotely from debian-13-tricks) =====
+setup_nopasswd() {
     if command -v curl >/dev/null 2>&1; then
-        if curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/sshm-askpass/setup-sshm-askpass.sh" | bash; then
-            echo "sshm-askpass setup complete."
+        if sudo curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/nopasswd/nopasswd.sh" -o /usr/local/bin/nopasswd \
+            && sudo chmod +x /usr/local/bin/nopasswd; then
+            if [ -f "/etc/sudoers.d/90-nopasswd-$USER" ]; then
+                echo "nopasswd: already enabled for $USER."
+            else
+                /usr/local/bin/nopasswd
+                echo "nopasswd installed; passwordless sudo is ON."
+            fi
         else
-            echo "warning: sshm-askpass setup failed (network?) — skipping." >&2
+            echo "warning: nopasswd pull failed (network?) — skipping." >&2
         fi
     else
-        echo "warning: curl not installed — skipping sshm-askpass setup." >&2
+        echo "warning: curl not installed — skipping nopasswd pull." >&2
     fi
 }
 
@@ -299,6 +316,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
     configure_dark_theme
     setup_path_and_nnn
     setup_sshm_askpass
+    setup_nopasswd
 
     if [ "$MODE" = "desktop" ]; then
         install_bluetui
