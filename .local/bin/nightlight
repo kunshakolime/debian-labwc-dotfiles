@@ -1,7 +1,9 @@
 #!/bin/bash
 # Night light: three states — warm (fixed, remembered temperature), off, and
 # auto (follows the sun). The waybar widget clicks cycle through them; the
-# Super+brightness keys fine-tune the warmth. Notifies like volume/brightness.
+# Super+F9/F10 keys fine-tune the warmth. Warm mode uses gammastep -O (instant,
+# no restart, so no flicker); auto runs the sun-aware gammastep daemon.
+# Notifies like volume/brightness.
 
 STATE="$HOME/.local/state/nightlight"
 STEP="${2:-250}"
@@ -25,10 +27,11 @@ write_state() {
 }
 
 apply() {
-    pkill -x wlsunset 2>/dev/null
+    pkill -x gammastep 2>/dev/null
     case "$mode" in
-        warm) sleep 0.1; wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" >/dev/null 2>&1 & ;;
-        auto) sleep 0.1; wlsunset -l "$LAT" -L "$LON" >/dev/null 2>&1 & ;;
+        warm) gammastep -O "$temp" >/dev/null 2>&1 ;;
+        auto) sleep 0.1; gammastep -l "$LAT" -L "$LON" >/dev/null 2>&1 & ;;
+        *)    gammastep -x >/dev/null 2>&1 ;;
     esac
 }
 
