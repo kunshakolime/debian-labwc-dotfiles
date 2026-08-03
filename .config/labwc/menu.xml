@@ -3,13 +3,13 @@
   <!-- Right-click menu on the desktop -->
   <menu id="root-menu" label="Applications">
     <item label="Terminal (foot)">
-      <action name="Execute" command="footclient" />
+      <action name="Execute" command="term" />
     </item>
     <item label="Launcher (fuzzel)">
       <action name="Execute" command="fuzzel" />
     </item>
     <item label="File Manager (nnn)">
-      <action name="Execute" command="footclient nnn" />
+      <action name="Execute" command="term nnn" />
     </item>
     <item label="Wallpaper (picker)">
       <action name="Execute" command="wallpaper" />

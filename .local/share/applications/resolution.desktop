@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Resolution
 Comment=Change display resolution
-Exec=footclient -e resolution
+Exec=term resolution
 Icon=preferences-desktop-display
 Type=Application
 Categories=System;Settings;

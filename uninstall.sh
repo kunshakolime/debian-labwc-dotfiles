@@ -40,8 +40,9 @@ rm -f "$HOME/.local/bin/volume" \
       "$HOME/.local/bin/power" \
       "$HOME/.local/bin/clipboard" \
       "$HOME/.local/bin/wallpaper" \
-      "$HOME/.local/bin/wallpaper-rotate" \
-      "$HOME/.local/bin/mount-net"
+     "$HOME/.local/bin/wallpaper-rotate" \
+     "$HOME/.local/bin/mount-net" \
+     "$HOME/.local/bin/term"
 rm -f "$HOME/.local/share/applications/"*.desktop
 rm -f "$HOME/.local/share/applications/desktop-only/"*.desktop 2>/dev/null
 rmdir "$HOME/.local/share/applications/desktop-only" 2>/dev/null || true

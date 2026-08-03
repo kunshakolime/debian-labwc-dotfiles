@@ -1,0 +1,15 @@
+#!/bin/bash
+# Terminal launcher wrapper — one place to switch the default terminal.
+#   term <command> [args...]   run a command in the default terminal
+#   term                       just open the default terminal
+#
+# The default is read from $TERMINAL (default: foot). foot uses footclient,
+# which keeps the fast server/client launch (autostart prewarms foot --server).
+# Swap terminals later by changing $TERMINAL in labwc/environment (or here).
+
+TERMINAL="${TERMINAL:-foot}"
+
+case "$TERMINAL" in
+    foot) exec footclient "$@" ;;
+    *)    exec "$TERMINAL" -e "$@" ;;
+esac

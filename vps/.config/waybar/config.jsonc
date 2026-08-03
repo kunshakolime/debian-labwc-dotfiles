@@ -30,13 +30,13 @@
     "custom/stats": {
         "exec": "$HOME/.config/waybar/stats.sh",
         "interval": 3,
-        "on-click": "footclient -e btop"
+        "on-click": "term btop"
     },
 
     "custom/netspeed": {
         "exec": "$HOME/.config/waybar/netspeed.sh",
         "interval": 3,
-        "on-click": "footclient -e btop"
+        "on-click": "term btop"
     },
 
     "pulseaudio": {
@@ -46,7 +46,7 @@
             "default": ["", ""]
         },
         "scroll-step": 5,
-        "on-click": "footclient -e pulsemixer",
+        "on-click": "term pulsemixer",
         "tooltip": false
     },
 

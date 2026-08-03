@@ -9,3 +9,7 @@ XKB_DEFAULT_LAYOUT=es
 
 # nnn — enable detail mode (sizes, dates)
 NNN_OPTS=d
+
+# Default terminal — everything launches through the `term` wrapper
+# (~/.local/bin/term), so switching terminals means changing this line.
+TERMINAL=foot

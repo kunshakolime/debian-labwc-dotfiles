@@ -131,7 +131,7 @@ apply_configs() {
                  "$HOME/.local/bin/nightlight" "$HOME/.local/bin/wallpaper" \
                  "$HOME/.local/bin/wallpaper-rotate" "$HOME/.local/bin/mount-net" \
                  "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" \
-                 "$HOME/.local/bin/bar"
+                 "$HOME/.local/bin/bar" "$HOME/.local/bin/term"
         cp "$SCRIPT_DIR/.local/share/applications/desktop-only/"*.desktop "$HOME/.local/share/applications/"
     else
         cp "$SCRIPT_DIR/.local/bin/volume"     "$HOME/.local/bin/"

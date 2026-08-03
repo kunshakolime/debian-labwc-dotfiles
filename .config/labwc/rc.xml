@@ -16,7 +16,7 @@
 
     <!-- Terminal -->
     <keybind key="W-Return">
-      <action name="Execute" command="footclient" />
+      <action name="Execute" command="term" />
     </keybind>
 
 

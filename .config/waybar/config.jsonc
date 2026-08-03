@@ -44,14 +44,14 @@
     "custom/stats": {
         "exec": "$HOME/.config/waybar/stats.sh",
         "interval": 3,
-        "on-click": "footclient -e btop"
+        "on-click": "term btop"
     },
 
     // --- Network speed ---
     "custom/netspeed": {
         "exec": "$HOME/.config/waybar/netspeed.sh",
         "interval": 3,
-        "on-click": "footclient -e btop"
+        "on-click": "term btop"
     },
 
     // --- Network (text only; the nm-applet icon in the tray covers the icon) ---
@@ -62,7 +62,7 @@
         "tooltip-format-wifi": "IP: {ipaddr}",
         "tooltip-format-ethernet": "IP: {ipaddr}",
         "interval": 30,
-        "on-click": "footclient -e nmtui"
+        "on-click": "term nmtui"
     },
 
     // --- Audio (PipeWire/PulseAudio) ---
@@ -73,7 +73,7 @@
             "default": ["", ""]
         },
         "scroll-step": 5,
-        "on-click": "footclient -e pulsemixer",
+        "on-click": "term pulsemixer",
         "tooltip": false
     },
 
@@ -82,7 +82,7 @@
         "format": " {status}",
         "format-connected": " {device_alias}",
         "format-device-preference": "headset",
-        "on-click": "footclient -e bluetui",
+        "on-click": "term bluetui",
         "tooltip-format": "Bluetooth: {status}\nConnected: {num_connections} device(s)"
     },
 
