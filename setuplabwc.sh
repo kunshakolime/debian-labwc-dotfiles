@@ -68,7 +68,7 @@ ensure_video_group() {
 # Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP)
 install_packages() {
     local pkgs=(
-        labwc waybar wofi foot fonts-font-awesome swaybg
+        labwc waybar fuzzel foot fonts-font-awesome swaybg
         dunst libnotify-bin wl-clipboard grim slurp
         jq curl btop nnn vim tmux fastfetch
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
@@ -113,7 +113,7 @@ apply_configs() {
     cp -r "$SCRIPT_DIR/.config/labwc"   "$HOME/.config/"
     cp -r "$SCRIPT_DIR/.config/waybar"  "$HOME/.config/"
     chmod +x "$HOME/.config/waybar/stats.sh" "$HOME/.config/waybar/netspeed.sh"
-    cp -r "$SCRIPT_DIR/.config/wofi"    "$HOME/.config/"
+    cp -r "$SCRIPT_DIR/.config/fuzzel"  "$HOME/.config/"
     cp -r "$SCRIPT_DIR/.config/foot"    "$HOME/.config/"
     cp -r "$SCRIPT_DIR/.config/dunst"   "$HOME/.config/"
     cp -r "$SCRIPT_DIR/.config/gtk-3.0" "$HOME/.config/"
@@ -273,7 +273,7 @@ finish() {
     fi
     echo ""
     echo "Reboot or run 'labwc' from tty1 to start your new desktop."
-    echo "Press Super+Space to launch apps (wofi)."
+    echo "Press Super+Space to launch apps (fuzzel)."
     echo "Network drives (WebDAV/SMB/SFTP): run 'mount-net add' once per share."
 }
 

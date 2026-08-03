@@ -5,8 +5,8 @@
     <item label="Terminal (foot)">
       <action name="Execute" command="footclient" />
     </item>
-    <item label="Launcher (wofi)">
-      <action name="Execute" command="wofi" />
+    <item label="Launcher (fuzzel)">
+      <action name="Execute" command="fuzzel" />
     </item>
     <item label="File Manager (nnn)">
       <action name="Execute" command="footclient nnn" />

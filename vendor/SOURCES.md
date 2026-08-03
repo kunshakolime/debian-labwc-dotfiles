@@ -13,4 +13,4 @@ network). All credit goes to their authors:
 - bluetui binary from its [v0.8.1 release](https://github.com/pythops/bluetui/releases/tag/v0.8.1).
 - Retrieved 2026-08-02. Update by re-downloading the source and re-vendoring here.
 - JetBrains Mono is by JetBrains; the Nerd Fonts patch adds icon glyphs used by
-  waybar/wofi/dunst/foot configs. bluetui is GPL-3.0 and provided as-is.
+  waybar/fuzzel/dunst/foot configs. bluetui is GPL-3.0 and provided as-is.

@@ -1,6 +1,6 @@
 #!/bin/bash
 ENV_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/labwc/environment"
-layout=$(printf "us\nes\nara\nlatam\nde\nfr" | wofi --dmenu --prompt="Keyboard layout" --width=15% --height=30% --location=center)
+layout=$(printf "us\nes\nara\nlatam\nde\nfr" | fuzzel --dmenu --prompt="Keyboard layout" --lines=6)
 [ -z "$layout" ] && exit
 
 if grep -q "^XKB_DEFAULT_LAYOUT=" "$ENV_FILE" 2>/dev/null; then

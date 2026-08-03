@@ -1,9 +1,9 @@
 #!/bin/bash
-# Toggle a wofi-based command: close any open wofi menu, otherwise run it.
-# Usage: menu <command...>   e.g. menu wofi   /   menu control
+# Toggle a fuzzel-based command: close any open fuzzel menu, otherwise run it.
+# Usage: menu <command...>   e.g. menu fuzzel   /   menu control
 
-if pgrep -x wofi >/dev/null 2>&1; then
-    pkill -x wofi
+if pgrep -x fuzzel >/dev/null 2>&1; then
+    pkill -x fuzzel
     exit 0
 fi
 

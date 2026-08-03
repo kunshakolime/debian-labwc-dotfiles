@@ -14,7 +14,7 @@ power="Suspend\nReboot\nShutdown"
 command -v swaylock >/dev/null 2>&1 && power="Lock\n$power"
 entries="$entries\n$power"
 
-choice=$(printf "%b" "$entries" | wofi --dmenu --prompt="Control" --width=30% --height=50% --location=center)
+choice=$(printf "%b" "$entries" | fuzzel --dmenu --prompt="Control")
 
 case "$choice" in
     "Clipboard history") clipboard ;;

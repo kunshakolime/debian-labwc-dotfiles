@@ -22,7 +22,7 @@ rm -f "${XDG_RUNTIME_DIR:-/tmp}/wallpaper-rotate.pid"
 echo "Removing configs..."
 rm -rf "$HOME/.config/labwc" \
        "$HOME/.config/waybar" \
-       "$HOME/.config/wofi" \
+       "$HOME/.config/fuzzel" \
        "$HOME/.config/foot" \
        "$HOME/.config/dunst" \
        "$HOME/.config/gtk-3.0" \
@@ -59,7 +59,7 @@ fi
 echo ""
 echo "Desktop setup removed."
 echo "  - processes: killed"
-echo "  - configs: deleted (~/.config/labwc, waybar, wofi, foot, dunst, gtk-*)"
+  echo "  - configs: deleted (~/.config/labwc, waybar, fuzzel, foot, dunst, gtk-*)"
 echo "  - scripts + .desktop entries: deleted"
 echo "  - bashrc: PATH export + nnn wrapper removed"
 echo "  - wallpapers: kept in ~/Pictures/Wallpapers"

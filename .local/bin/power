@@ -1,7 +1,7 @@
 #!/bin/bash
 options="Suspend\nReboot\nShutdown"
 command -v swaylock >/dev/null && options="Lock\n$options"
-choice=$(printf "%b" "$options" | wofi --dmenu --prompt="Power" --width=15% --height=30% --location=center)
+choice=$(printf "%b" "$options" | fuzzel --dmenu --prompt="Power" --lines=5)
 case "$choice" in
     Lock)     swaylock ;;
     Suspend)  systemctl suspend ;;

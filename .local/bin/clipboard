@@ -1,2 +1,2 @@
 #!/bin/bash
-cliphist list | wofi --dmenu --prompt="Clipboard" --width=40% --height=50% --location=center | cliphist decode | wl-copy
+cliphist list | fuzzel --dmenu --prompt="Clipboard" --width=50 --lines=15 | cliphist decode | wl-copy

@@ -29,7 +29,7 @@ entries="${entries#"
 
 [ -z "$entries" ] && { notify-send "No modes available"; exit 1; }
 
-selected=$(echo "$entries" | wofi --dmenu --prompt "Resolution" 2>/dev/null)
+selected=$(echo "$entries" | fuzzel --dmenu --prompt "Resolution" --lines=15)
 [ -z "$selected" ] && exit 0
 
 output=$(echo "$selected" | sed 's/^\[\(.*\)\].*$/\1/')
@@ -47,7 +47,7 @@ revert() {
 revert &
 revert_pid=$!
 
-confirm=$(echo -e "Yes\nRevert" | wofi --dmenu --prompt "Keep? (10s)" 2>/dev/null)
+confirm=$(echo -e "Yes\nRevert" | fuzzel --dmenu --prompt "Keep? (10s)" --lines=2)
 kill "$revert_pid" 2>/dev/null
 
 if [ "$confirm" = "Yes" ]; then
