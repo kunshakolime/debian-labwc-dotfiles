@@ -43,7 +43,7 @@ brightness keys). Running as root sets up `/root` instead. Reset with `uninstall
 
 ### Packages (bare metal)
 
-labwc, waybar, fuzzel, foot, swaybg, wlsunset, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
+labwc, waybar, fuzzel, foot, swaybg, gammastep, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
 
 ## VPS
 
@@ -66,7 +66,7 @@ podman run -d --name labwc-vps --network host -v /opt/labwc_dotfiles:/repo:ro de
 
 ### Packages (VPS)
 
-Same as bare metal minus: wlsunset, bluez, libspa-0.2-bluetooth, brightnessctl,
+Same as bare metal minus: gammastep, bluez, libspa-0.2-bluetooth, brightnessctl,
 network-manager, wlr-randr, gnome-disk-utility, zenity
 
 Added: wayvnc, novnc, websockify, xwayland, zram-tools (compressed swap, 50% of

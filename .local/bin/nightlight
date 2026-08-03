@@ -1,27 +1,25 @@
 #!/bin/bash
-# Night light: wlsunset toggle (control center) or a zenity temperature slider
-# (waybar widget click). A fixed temperature is applied, so toggling on always
-# visibly warms the screen, not only after sunset.
+# Night light: gammastep one-shot temperature (applies instantly, no daemon, so
+# the zenity slider live-previews without flicker). State is tracked in a small
+# file since no process stays running to pgrep.
 
-LAT=52.5
-LON=13.4
+STATE="$HOME/.local/state/nightlight"
 
 set_temp() { # $1 = temperature in Kelvin
     local temp="${1:-4500}"
-    pkill -x wlsunset 2>/dev/null
-    sleep 0.2
-    wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" >/dev/null 2>&1 &
+    if [ "$temp" -ge 6500 ]; then
+        gammastep -x >/dev/null 2>&1
+        rm -f "$STATE"
+    else
+        gammastep -O "$temp" >/dev/null 2>&1
+        echo "$temp" > "$STATE"
+    fi
 }
 
 case "${1:-}" in
     status)
-        if pgrep -x wlsunset >/dev/null; then
-            temp=$(pgrep -af wlsunset | grep -oP -- '-t \K[0-9]+' | head -1)
-            if [ "${temp:-0}" -ge 6500 ]; then
-                printf '{"text":"%s","tooltip":"Night light off (no filter)","class":"off"}\n' "$(printf '\uf185')"
-            else
-                printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "${temp:-?}"
-            fi
+        if [ -f "$STATE" ]; then
+            printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "$(cat "$STATE")"
         else
             printf '{"text":"%s","tooltip":"Night light off","class":"off"}\n' "$(printf '\uf185')"
         fi
@@ -40,8 +38,9 @@ case "${1:-}" in
         exit 0
         ;;
     toggle|*)
-        if pgrep -x wlsunset >/dev/null; then
-            pkill wlsunset
+        if [ -f "$STATE" ]; then
+            gammastep -x >/dev/null 2>&1
+            rm -f "$STATE"
         else
             set_temp 4500
         fi

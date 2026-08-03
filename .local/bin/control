@@ -7,7 +7,7 @@ entries="Clipboard history"
 command -v wallpaper >/dev/null 2>&1 && entries="$entries\nWallpaper"
 command -v kb-layout >/dev/null 2>&1 && entries="$entries\nKeyboard layout"
 command -v wlr-randr >/dev/null 2>&1 && entries="$entries\nResolution"
-command -v wlsunset >/dev/null 2>&1 && entries="$entries\nNight light"
+command -v gammastep >/dev/null 2>&1 && entries="$entries\nNight light"
 command -v widgets >/dev/null 2>&1 && entries="$entries\nWaybar widgets"
 
 power="Suspend\nReboot\nShutdown"

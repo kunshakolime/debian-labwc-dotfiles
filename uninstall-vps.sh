@@ -22,7 +22,7 @@ if [ -f "$ENV_FILE" ]; then
     sed -i '/^WLR_HEADLESS_HEIGHT=/d' "$ENV_FILE"
 fi
 
-# --- Restore default autostart (no VNC, with wlsunset) from the repo ---
+# --- Restore default autostart (no VNC) from the repo ---
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cp "$SCRIPT_DIR/.config/labwc/autostart" "$HOME/.config/labwc/autostart"
 chmod +x "$HOME/.config/labwc/autostart"
