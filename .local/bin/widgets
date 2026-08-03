@@ -3,6 +3,9 @@
 # Shows a wofi list of every widget defined in the waybar config; picking one
 # adds/removes it from the bar, then waybar reloads via SIGUSR2.
 # Only the modules-* lines are touched, so JSONC comments stay intact.
+# .widgets-state snapshots the original layout (order per side), so re-enabling
+# a widget restores its exact original slot and the menu lists widgets in the
+# same order as the bar.
 
 CONF="${XDG_CONFIG_HOME:-$HOME/.config}/waybar/config.jsonc"
 
@@ -24,9 +27,11 @@ declare -A LABELS=(
 # waybar-config helper: list togglable widgets / test if one is shown / toggle it.
 wconf() {
     python3 - "$CONF" "$@" <<'PY'
-import re, sys
+import os, re, sys
 
 path, action = sys.argv[1], sys.argv[2]
+state_path = os.path.join(os.path.dirname(path), ".widgets-state")
+SIDES = ("left", "center", "right")
 META = {"layer", "position", "height", "margin-top", "margin-bottom",
         "margin-left", "margin-right", "spacing",
         "modules-left", "modules-center", "modules-right"}
@@ -34,42 +39,91 @@ META = {"layer", "position", "height", "margin-top", "margin-bottom",
 lines = open(path).read().splitlines(keepends=True)
 text = "".join(lines)
 
-def arrays():
-    for m in re.finditer(r'"modules-(?:left|center|right)":\s*\[([^\]]*)\]', text):
-        yield m.group(1)
+def array_modules(side):
+    m = re.search(r'"modules-%s":\s*\[([^\]]*)\]' % side, text)
+    return re.findall(r'"([^"]+)"', m.group(1)) if m else []
+
+def load_state():
+    """(side_of, order): each module's original side + original order per side."""
+    side_of, order = {}, {}
+    if os.path.exists(state_path):
+        for line in open(state_path):
+            parts = line.split()
+            if parts and parts[0] in SIDES:
+                order[parts[0]] = parts[1:]
+                for mod in parts[1:]:
+                    side_of[mod] = parts[0]
+    if not order:  # first run (or stale state): snapshot the current layout
+        for side in SIDES:
+            mods = array_modules(side)
+            order[side] = mods
+            for mod in mods:
+                side_of[mod] = side
+    return side_of, order
+
+def save_state(order):
+    with open(state_path, "w") as f:
+        for side in SIDES:
+            if order.get(side):
+                f.write(side + " " + " ".join(order[side]) + "\n")
 
 if action == "list":
-    seen = set()
-    for a in arrays():
-        seen.update(re.findall(r'"([^"]+)"', a))
-    for m in re.finditer(r'^\s{4}"([^"]+)":', text, re.M):
-        if m.group(1) not in META:
+    out, seen = [], set()
+    for side in SIDES:
+        for mod in array_modules(side):       # bar order: left, center, right
+            if mod not in seen:
+                out.append(mod)
+                seen.add(mod)
+    for m in re.finditer(r'^\s{4}"([^"]+)":', text, re.M):  # hidden widgets last
+        if m.group(1) not in META and m.group(1) not in seen:
+            out.append(m.group(1))
             seen.add(m.group(1))
-    print("\n".join(sorted(seen)))
+    print("\n".join(out))
     sys.exit(0)
 
 module = sys.argv[3]
 if action == "enabled":
-    for a in arrays():
-        if '"%s"' % module in a:
+    for side in SIDES:
+        if module in array_modules(side):
             sys.exit(0)
     sys.exit(1)
 
 if action == "toggle":
-    want = all('"%s"' % module not in a for a in arrays())
+    side_of, order = load_state()
+
+    new_side = {side: array_modules(side) for side in SIDES}
+    present = [side for side in SIDES if module in new_side[side]]
+
+    if present:
+        # Turning off: drop the module from every array (self-heals duplicates).
+        for side in SIDES:
+            new_side[side] = [e for e in new_side[side] if e != module]
+    else:
+        # Turning on: return the module to its original slot in its original side.
+        side = side_of.get(module, "right")
+        entries = new_side[side]
+        if module not in entries:
+            orig = order.get(side, [])
+            if module in orig:
+                after = set(orig[orig.index(module) + 1:])
+                pos = next((i for i, e in enumerate(entries) if e in after), None)
+            else:
+                pos = None
+            if pos is None:
+                entries.append(module)
+            else:
+                entries.insert(pos, module)
+
     for i, line in enumerate(lines):
-        m = re.match(r'^(\s*"modules-(?:left|center|right)":\s*\[)([^\]]*)(\],?\s*)$', line)
+        m = re.match(r'^(\s*"modules-(left|center|right)":\s*\[)([^\]]*)(\],?\s*)$', line)
         if not m:
             continue
-        prefix, inner, suffix = m.groups()
-        entries = re.findall(r'"([^"]+)"', inner)
-        if want:
-            if module not in entries:
-                entries.append(module)
-        else:
-            entries = [e for e in entries if e != module]
+        s, prefix, inner, suffix = m.group(2), m.group(1), m.group(3), m.group(4)
+        entries = new_side[s]
         lines[i] = prefix + ", ".join('"%s"' % e for e in entries) + suffix
     open(path, "w").writelines(lines)
+
+    save_state(order)
     sys.exit(0)
 PY
 }

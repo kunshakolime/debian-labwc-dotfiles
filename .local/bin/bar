@@ -1,0 +1,10 @@
+#!/bin/bash
+# Toggle the whole waybar on/off (Super+b). A running bar is killed, a missing
+# one is started, so a second press can never stack two bars.
+
+if pgrep -x waybar >/dev/null 2>&1; then
+    pkill -x waybar
+else
+    waybar &
+    disown
+fi

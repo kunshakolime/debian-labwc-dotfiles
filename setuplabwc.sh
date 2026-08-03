@@ -130,7 +130,8 @@ apply_configs() {
                  "$HOME/.local/bin/volume"    "$HOME/.local/bin/resolution" \
                  "$HOME/.local/bin/nightlight" "$HOME/.local/bin/wallpaper" \
                  "$HOME/.local/bin/wallpaper-rotate" "$HOME/.local/bin/mount-net" \
-                 "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets"
+                 "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" \
+                 "$HOME/.local/bin/bar"
         cp "$SCRIPT_DIR/.local/share/applications/desktop-only/"*.desktop "$HOME/.local/share/applications/"
     else
         cp "$SCRIPT_DIR/.local/bin/volume"     "$HOME/.local/bin/"
@@ -142,7 +143,8 @@ apply_configs() {
         cp "$SCRIPT_DIR/.local/bin/menu"       "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/control"    "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/widgets"    "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard" "$HOME/.local/bin/mount-net" "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets"
+        cp "$SCRIPT_DIR/.local/bin/bar"        "$HOME/.local/bin/"
+        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard" "$HOME/.local/bin/mount-net" "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" "$HOME/.local/bin/bar"
     fi
 }
 

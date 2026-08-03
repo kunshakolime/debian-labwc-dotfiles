@@ -32,7 +32,7 @@
 
     <!-- Toggle the whole waybar (reclaim screen real estate) -->
     <keybind key="W-b">
-      <action name="Execute" command="pkill -USR1 -x waybar" />
+      <action name="Execute" command="bar" />
     </keybind>
 
     <!-- Window cycling -->

@@ -176,7 +176,8 @@ nmcli connection up <phone-hotspot-name>
 - `resolution` — display resolution picker
 - `power` — power menu (lock / suspend / reboot / shutdown)
 - `control` — flat control center (clipboard, wallpaper, layout, resolution, night light, waybar widgets, power); desktop-only entries auto-hide on VPS
-- `widgets` — toggle which waybar widgets show (edits `modules-*`, reloads via SIGUSR2)
+- `widgets` — toggle which waybar widgets show (edits `modules-*`, lists widgets in bar order, restores each one to its exact original slot via `.widgets-state`, reloads via SIGUSR2)
+- `bar` — toggle the whole waybar on/off (`Super+b`)
 - `menu <command>` — toggle any wofi-based menu (second press closes)
 - `mount-net` — add/remove/mount network shares (WebDAV, SMB, SFTP)
 

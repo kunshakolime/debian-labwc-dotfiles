@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Control Center
+Comment=Clipboard, wallpaper, layout, resolution, night light, waybar widgets, power
+Exec=control
+Icon=preferences-system
+Type=Application
+Categories=System;Settings;
+NoDisplay=false
