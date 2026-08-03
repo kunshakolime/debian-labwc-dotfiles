@@ -1,8 +1,10 @@
 #!/bin/bash
-# Night light: three states — warm (fixed, remembered temperature), off, and
-# auto (follows the sun). The waybar widget clicks cycle through them; the
-# Super+F9/F10 keys fine-tune the warmth. Warm mode uses gammastep -O with -r
-# (no fade, so no flicker); auto runs the sun-aware gammastep daemon.
+# Night light: warm (fixed, remembered temperature), auto (follows the sun),
+# or off. The waybar widget clicks cycle modes; Super+F9/F10 fine-tune warmth.
+# gammastep always runs detached, so every command returns instantly — no hung
+# invocations, no late/stale notifications. The saved state is restored
+# silently at login (autostart runs `nightlight restore`). `status` reflects
+# what's actually on screen, not just the state file.
 # Notifies like volume/brightness.
 
 STATE="$HOME/.local/state/nightlight"
@@ -26,12 +28,16 @@ write_state() {
     printf '%s %s\n' "$mode" "$temp" > "$STATE"
 }
 
+running() {
+    pgrep -x gammastep >/dev/null 2>&1
+}
+
 apply() {
     pkill -x gammastep 2>/dev/null
     case "$mode" in
-        warm) gammastep -O "$temp" -r >/dev/null 2>&1 ;;
-        auto) sleep 0.1; gammastep -l "$LAT" -L "$LON" >/dev/null 2>&1 & ;;
-        *)    gammastep -x >/dev/null 2>&1 ;;
+        warm) gammastep -O "$temp" -r >/dev/null 2>&1 & ;;
+        auto) gammastep -l "$LAT:$LON" >/dev/null 2>&1 & ;;
+        # off: no daemon; wlr-gamma-control resets to neutral when ours dies
     esac
 }
 
@@ -57,6 +63,9 @@ notify() {
 case "${1:-toggle}" in
     status)
         read_state
+        if [ "$mode" != off ] && ! running; then
+            mode=off
+        fi
         case "$mode" in
             warm) printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "$temp" ;;
             auto) printf '{"text":"%s","tooltip":"Night light auto","class":"auto"}\n' "$(printf '\uf042')" ;;
@@ -93,8 +102,11 @@ case "${1:-toggle}" in
         esac
         write_state; apply; notify
         ;;
+    restore)
+        read_state; apply
+        ;;
     *)
-        echo "usage: nightlight {status|toggle|warm|off|auto|warmer|cooler} [temp|step]"
+        echo "usage: nightlight {status|toggle|warm [temp]|off|auto|warmer [step]|cooler [step]|restore}"
         exit 1
         ;;
 esac

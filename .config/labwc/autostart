@@ -8,6 +8,9 @@ foot --server &
 # wallpaper — restores saved wallpaper and rotation from wallpaper.conf
 "$HOME/.local/bin/wallpaper" --restore &
 
+# nightlight — silently restore last night-light state (warm/auto resume, off stays off)
+"$HOME/.local/bin/nightlight" restore &
+
 # waybar — the top/bottom status bar
 waybar &
 
