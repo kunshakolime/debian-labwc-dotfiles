@@ -1,19 +1,45 @@
 #!/bin/bash
+# Night light: wlsunset toggle (control center) or a zenity temperature slider
+# (waybar widget click). A fixed temperature is applied, so toggling on always
+# visibly warms the screen, not only after sunset.
+
+LAT=52.5
+LON=13.4
+
+set_temp() { # $1 = temperature in Kelvin
+    local temp="${1:-4500}"
+    pkill -x wlsunset 2>/dev/null
+    sleep 0.2
+    wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" &
+}
+
 case "${1:-}" in
     status)
         if pgrep -x wlsunset >/dev/null; then
-            echo '{"text":"","tooltip":"Night light on","class":"on"}'
+            temp=$(pgrep -af wlsunset | grep -oP -- '-t \K[0-9]+' | head -1)
+            if [ "${temp:-0}" -ge 6500 ]; then
+                printf '{"text":"%s","tooltip":"Night light off (no filter)","class":"off"}\n' "$(printf '\uf185')"
+            else
+                printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "${temp:-?}"
+            fi
         else
-            echo '{"text":"","tooltip":"Night light off","class":"off"}'
+            printf '{"text":"%s","tooltip":"Night light off","class":"off"}\n' "$(printf '\uf185')"
         fi
         exit 0
+        ;;
+    set)
+        set_temp "${2:-4500}"
+        ;;
+    picker)
+        temp=$(zenity --scale --title="Night light" --text="Screen warmth" \
+            --value=4500 --min-value=3000 --max-value=6500 --step=100) || exit 0
+        set_temp "$temp"
         ;;
     toggle|*)
         if pgrep -x wlsunset >/dev/null; then
             pkill wlsunset
         else
-            # adjust lat/long for your location
-            wlsunset -l 52.5 -L 13.4 &
+            set_temp 4500
         fi
         ;;
 esac

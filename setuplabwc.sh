@@ -78,7 +78,7 @@ install_packages() {
     )
 
     if [ "$MODE" = "desktop" ]; then
-        pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility )
+        pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility zenity )
     else
         pkgs+=( xwayland wayvnc novnc websockify openssl zram-tools )
     fi
