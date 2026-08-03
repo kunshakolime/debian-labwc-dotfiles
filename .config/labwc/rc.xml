@@ -90,11 +90,11 @@
       <action name="Execute" command="brightness down" />
     </keybind>
 
-    <!-- Night light warmth (Super + brightness keys) -->
-    <keybind key="W-XF86MonBrightnessUp">
+    <!-- Night light warmth (Super + F9/F10) -->
+    <keybind key="W-F9">
       <action name="Execute" command="nightlight warmer" />
     </keybind>
-    <keybind key="W-XF86MonBrightnessDown">
+    <keybind key="W-F10">
       <action name="Execute" command="nightlight cooler" />
     </keybind>
 
