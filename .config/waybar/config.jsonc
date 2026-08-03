@@ -115,7 +115,7 @@
     "custom/nightlight": {
         "exec": "$HOME/.local/bin/nightlight status",
         "interval": 10,
-        "on-click": "$HOME/.local/bin/nightlight picker",
+        "on-click": "$HOME/.local/bin/nightlight toggle",
         "return-type": "json"
     }
 }

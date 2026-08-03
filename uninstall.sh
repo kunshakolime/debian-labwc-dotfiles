@@ -10,7 +10,7 @@ echo "Stopping desktop session processes..."
 
 pkill -x waybar 2>/dev/null || true
 pkill -x dunst 2>/dev/null || true
-pkill -x gammastep 2>/dev/null || true
+pkill -x wlsunset 2>/dev/null || true
 pkill -x swaybg 2>/dev/null || true
 pkill -x nm-applet 2>/dev/null || true
 pkill -x lxpolkit 2>/dev/null || true

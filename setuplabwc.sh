@@ -62,7 +62,7 @@ ensure_video_group() {
 
 # ===== Packages =====
 # VPS-only:  xwayland, wayvnc, novnc, websockify, openssl
-# Desktop-only: gammastep, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
+# Desktop-only: wlsunset, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
 #               network-manager, network-manager-gnome, wlr-randr,
 #               gnome-disk-utility
 # Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP)
@@ -78,7 +78,7 @@ install_packages() {
     )
 
     if [ "$MODE" = "desktop" ]; then
-        pkgs+=( gammastep ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility zenity )
+        pkgs+=( wlsunset ntfs-3g libspa-0.2-bluetooth bluez brightnessctl network-manager network-manager-gnome wlr-randr gnome-disk-utility zenity )
     else
         pkgs+=( xwayland wayvnc novnc websockify openssl zram-tools )
     fi

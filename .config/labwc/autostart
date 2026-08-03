@@ -14,6 +14,9 @@ waybar &
 # dunst — notification daemon (volume popups, battery alerts, etc.)
 dunst &
 
+# wlsunset — blue light filter at night (adjust lat/long for your location)
+wlsunset -l 52.5 -L 13.4 &
+
 # cliphist — clipboard manager with history (press Super+V to browse)
 wl-paste --watch cliphist store &
 

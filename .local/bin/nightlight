@@ -1,48 +1,19 @@
 #!/bin/bash
-# Night light: gammastep one-shot temperature (applies instantly, no daemon, so
-# the zenity slider live-previews without flicker). State is tracked in a small
-# file since no process stays running to pgrep.
-
-STATE="$HOME/.local/state/nightlight"
-
-set_temp() { # $1 = temperature in Kelvin
-    local temp="${1:-4500}"
-    if [ "$temp" -ge 6500 ]; then
-        gammastep -x >/dev/null 2>&1
-        rm -f "$STATE"
-    else
-        gammastep -O "$temp" >/dev/null 2>&1
-        echo "$temp" > "$STATE"
-    fi
-}
-
 case "${1:-}" in
     status)
-        if [ -f "$STATE" ]; then
-            printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "$(cat "$STATE")"
+        if pgrep -x wlsunset >/dev/null; then
+            echo '{"text":"","tooltip":"Night light on","class":"on"}'
         else
-            printf '{"text":"%s","tooltip":"Night light off","class":"off"}\n' "$(printf '\uf185')"
+            echo '{"text":"","tooltip":"Night light off","class":"off"}'
         fi
         exit 0
         ;;
-    set)
-        set_temp "${2:-4500}"
-        ;;
-    picker)
-        zenity --scale --title="Night light" --text="Screen warmth" \
-            --value=4500 --min-value=3000 --max-value=6500 --step=100 \
-            --print-partial 2>/dev/null |
-        while read -r temp; do
-            [ -n "$temp" ] && set_temp "$temp"
-        done
-        exit 0
-        ;;
     toggle|*)
-        if [ -f "$STATE" ]; then
-            gammastep -x >/dev/null 2>&1
-            rm -f "$STATE"
+        if pgrep -x wlsunset >/dev/null; then
+            pkill wlsunset
         else
-            set_temp 4500
+            # adjust lat/long for your location
+            wlsunset -l 52.5 -L 13.4 &
         fi
         ;;
 esac
