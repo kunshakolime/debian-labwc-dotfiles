@@ -90,6 +90,14 @@
       <action name="Execute" command="brightness down" />
     </keybind>
 
+    <!-- Night light warmth (Super + brightness keys) -->
+    <keybind key="W-XF86MonBrightnessUp">
+      <action name="Execute" command="nightlight warmer" />
+    </keybind>
+    <keybind key="W-XF86MonBrightnessDown">
+      <action name="Execute" command="nightlight cooler" />
+    </keybind>
+
     <!-- Media controls -->
     <keybind key="XF86AudioPlay">
       <action name="Execute" command="playerctl play-pause" />

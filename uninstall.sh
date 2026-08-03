@@ -29,6 +29,7 @@ rm -rf "$HOME/.config/labwc" \
        "$HOME/.config/gtk-4.0" \
        "$HOME/.config/mimeapps.list" \
        "$HOME/.config/wallpaper.conf"
+rm -f "$HOME/.local/state/nightlight"
 
 echo "Removing scripts and desktop entries..."
 rm -f "$HOME/.local/bin/volume" \

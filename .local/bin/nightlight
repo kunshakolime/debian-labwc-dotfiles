@@ -1,19 +1,97 @@
 #!/bin/bash
-case "${1:-}" in
+# Night light: three states — warm (fixed, remembered temperature), off, and
+# auto (follows the sun). The waybar widget clicks cycle through them; the
+# Super+brightness keys fine-tune the warmth. Notifies like volume/brightness.
+
+STATE="$HOME/.local/state/nightlight"
+STEP="${2:-250}"
+LAT=52.5
+LON=13.4
+DEFAULT_TEMP=4500
+
+mode=off
+temp="$DEFAULT_TEMP"
+
+read_state() {
+    [ -f "$STATE" ] || return
+    read -r _mode _temp < "$STATE" 2>/dev/null
+    [ -n "$_mode" ] && mode="$_mode"
+    [ -n "$_temp" ] && temp="$_temp"
+}
+
+write_state() {
+    mkdir -p "$(dirname "$STATE")"
+    printf '%s %s\n' "$mode" "$temp" > "$STATE"
+}
+
+apply() {
+    pkill -x wlsunset 2>/dev/null
+    case "$mode" in
+        warm) sleep 0.1; wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" >/dev/null 2>&1 & ;;
+        auto) sleep 0.1; wlsunset -l "$LAT" -L "$LON" >/dev/null 2>&1 & ;;
+    esac
+}
+
+notify() {
+    case "$mode" in
+        warm)
+            pct=$(( (6500 - temp) * 100 / 3500 ))
+            dunstify -h string:x-dunst-stack-tag:nightlight \
+                -h int:value:"$pct" -a "night light" -u low \
+                "Night light" "Warm ${temp}K"
+            ;;
+        auto)
+            dunstify -h string:x-dunst-stack-tag:nightlight \
+                -a "night light" -u low "Night light" "Auto (follows the sun)"
+            ;;
+        off)
+            dunstify -h string:x-dunst-stack-tag:nightlight \
+                -a "night light" -u low "Night light" "Off"
+            ;;
+    esac
+}
+
+case "${1:-toggle}" in
     status)
-        if pgrep -x wlsunset >/dev/null; then
-            echo '{"text":"","tooltip":"Night light on","class":"on"}'
-        else
-            echo '{"text":"","tooltip":"Night light off","class":"off"}'
-        fi
+        read_state
+        case "$mode" in
+            warm) printf '{"text":"%s","tooltip":"Night light %sK","class":"on"}\n' "$(printf '\uf186')" "$temp" ;;
+            auto) printf '{"text":"%s","tooltip":"Night light auto","class":"auto"}\n' "$(printf '\uf042')" ;;
+            off)  printf '{"text":"%s","tooltip":"Night light off","class":"off"}\n' "$(printf '\uf185')" ;;
+        esac
         exit 0
         ;;
-    toggle|*)
-        if pgrep -x wlsunset >/dev/null; then
-            pkill wlsunset
-        else
-            # adjust lat/long for your location
-            wlsunset -l 52.5 -L 13.4 &
-        fi
+    warm)
+        read_state; mode=warm; temp="${2:-$temp}"
+        [ "$temp" -gt 6500 ] && temp=6500
+        [ "$temp" -lt 3000 ] && temp=3000
+        write_state; apply; notify
+        ;;
+    off)
+        read_state; mode=off; write_state; apply; notify
+        ;;
+    auto)
+        read_state; mode=auto; write_state; apply; notify
+        ;;
+    warmer)
+        read_state; mode=warm; temp=$((temp - STEP)); [ "$temp" -lt 3000 ] && temp=3000
+        write_state; apply; notify
+        ;;
+    cooler)
+        read_state; mode=warm; temp=$((temp + STEP)); [ "$temp" -gt 6500 ] && temp=6500
+        write_state; apply; notify
+        ;;
+    toggle)
+        read_state
+        case "$mode" in
+            warm) mode=off ;;
+            off)  mode=auto ;;
+            *)    mode=warm ;;
+        esac
+        write_state; apply; notify
+        ;;
+    *)
+        echo "usage: nightlight {status|toggle|warm|off|auto|warmer|cooler} [temp|step]"
+        exit 1
         ;;
 esac

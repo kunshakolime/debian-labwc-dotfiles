@@ -102,6 +102,7 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart
 | `Super` + arrows | Snap window to edge |
 | Media keys | Volume / playback control |
 | Brightness keys | Backlight ±2% *(bare metal only)* |
+| `Super` + Brightness keys | Night light warmth ±250K *(bare metal only)* |
 
 ## Wallpaper
 

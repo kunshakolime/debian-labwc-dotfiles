@@ -67,4 +67,5 @@ window#waybar {
 #clock { color: #e0e0e0; }
 #custom-weather { color: #90caf9; }
 #custom-nightlight.on { color: #ffab91; }
+#custom-nightlight.auto { color: #ffd54f; }
 #custom-nightlight.off { color: #78909c; }
