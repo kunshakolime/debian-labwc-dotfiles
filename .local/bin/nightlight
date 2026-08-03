@@ -10,7 +10,7 @@ set_temp() { # $1 = temperature in Kelvin
     local temp="${1:-4500}"
     pkill -x wlsunset 2>/dev/null
     sleep 0.2
-    wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" &
+    wlsunset -l "$LAT" -L "$LON" -T $((temp + 1)) -t "$temp" >/dev/null 2>&1 &
 }
 
 case "${1:-}" in
@@ -31,9 +31,13 @@ case "${1:-}" in
         set_temp "${2:-4500}"
         ;;
     picker)
-        temp=$(zenity --scale --title="Night light" --text="Screen warmth" \
-            --value=4500 --min-value=3000 --max-value=6500 --step=100) || exit 0
-        set_temp "$temp"
+        zenity --scale --title="Night light" --text="Screen warmth" \
+            --value=4500 --min-value=3000 --max-value=6500 --step=100 \
+            --print-partial 2>/dev/null |
+        while read -r temp; do
+            [ -n "$temp" ] && set_temp "$temp"
+        done
+        exit 0
         ;;
     toggle|*)
         if pgrep -x wlsunset >/dev/null; then
