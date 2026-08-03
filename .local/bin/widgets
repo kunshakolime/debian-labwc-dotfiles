@@ -3,9 +3,9 @@
 # Shows a wofi list of every widget defined in the waybar config; picking one
 # adds/removes it from the bar, then waybar reloads via SIGUSR2.
 # Only the modules-* lines are touched, so JSONC comments stay intact.
-# .widgets-state snapshots the original layout (order per side), so re-enabling
-# a widget restores its exact original slot and the menu lists widgets in the
-# same order as the bar.
+# .widgets-state snapshots the original layout (order per side). The menu lists
+# widgets in that fixed order — disabling one keeps it in place (marked ✗) —
+# and every toggle applies to the bar immediately, so there's no Done step.
 
 CONF="${XDG_CONFIG_HOME:-$HOME/.config}/waybar/config.jsonc"
 
@@ -68,13 +68,14 @@ def save_state(order):
                 f.write(side + " " + " ".join(order[side]) + "\n")
 
 if action == "list":
+    _, order = load_state()
     out, seen = [], set()
     for side in SIDES:
-        for mod in array_modules(side):       # bar order: left, center, right
+        for mod in order.get(side, []):       # stable original order, not live
             if mod not in seen:
                 out.append(mod)
                 seen.add(mod)
-    for m in re.finditer(r'^\s{4}"([^"]+)":', text, re.M):  # hidden widgets last
+    for m in re.finditer(r'^\s{4}"([^"]+)":', text, re.M):  # newly added last
         if m.group(1) not in META and m.group(1) not in seen:
             out.append(m.group(1))
             seen.add(m.group(1))
@@ -133,10 +134,10 @@ while true; do
         label="${LABELS[$mod]:-$mod}"
         if wconf enabled "$mod"; then printf '✓ %s\n' "$label"; else printf '✗ %s\n' "$label"; fi
     done
-    printf 'Done\n')"
+    printf 'Close\n')"
     sel="$(printf '%s\n' "$sel" | wofi --dmenu --prompt="Waybar widgets (✓ shown)" --width=25% --height=55% --location=center)"
     [ -n "$sel" ] || break
-    [ "$sel" = "Done" ] && break
+    [ "$sel" = "Close" ] && break
 
     label="${sel#✓ }"
     label="${label#✗ }"
@@ -146,6 +147,6 @@ while true; do
     done
     [ -z "$mod" ] && mod="$label"
     wconf toggle "$mod"
+    pkill -USR2 -x waybar 2>/dev/null
 done
 
-pkill -USR2 -x waybar 2>/dev/null
