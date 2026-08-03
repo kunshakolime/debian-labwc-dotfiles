@@ -218,6 +218,19 @@ EOF
     fi
 }
 
+# ===== sshm password auto-fill (user-level, pulled from debian-13-tricks) =====
+setup_sshm_askpass() {
+    if command -v curl >/dev/null 2>&1; then
+        if curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/sshm-askpass/setup-sshm-askpass.sh" | bash; then
+            echo "sshm-askpass setup complete."
+        else
+            echo "warning: sshm-askpass setup failed (network?) — skipping." >&2
+        fi
+    else
+        echo "warning: curl not installed — skipping sshm-askpass setup." >&2
+    fi
+}
+
 # ===== VPS-specific overrides (no display hardware) =====
 configure_vps() {
     echo "Configuring headless VNC setup..."
@@ -285,6 +298,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
     apply_configs
     configure_dark_theme
     setup_path_and_nnn
+    setup_sshm_askpass
 
     if [ "$MODE" = "desktop" ]; then
         install_bluetui
