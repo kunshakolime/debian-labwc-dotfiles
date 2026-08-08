@@ -28,9 +28,9 @@ One script, two modes:
 
 ## Install
 
-Everything except `apt` packages ships in the repo (offline-safe). `mount-net`
-and `nopasswd` are pulled from debian-13-tricks each run (skipped with a warning
-if offline).
+Everything except `apt` packages ships in the repo (offline-safe). `mount-net`,
+`nopasswd`, `apt-sources` and the apt sources setup are pulled from
+debian-13-tricks each run (skipped with a warning if offline).
 
 ### Bare metal
 
@@ -44,7 +44,7 @@ brightness keys). Running as root sets up `/root` instead. Reset with `uninstall
 
 ### Packages (bare metal)
 
-labwc, waybar, fuzzel, foot, swaybg, gammastep, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, bluetui, davfs2, cifs-utils, sshfs, curlftpfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
+labwc, waybar, fuzzel, foot, swaybg, gammastep, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, whiptail, bluetui, davfs2, cifs-utils, sshfs, curlftpfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
 
 ## VPS
 
@@ -85,6 +85,12 @@ sudo systemctl enable --now zramswap  # default: /etc/default/zramswap ALGO=zstd
 ```
 
 Removes VNC, noVNC, headless env vars, and restores the default autostart.
+
+## Apt sources
+
+Setup installs `apt-sources` then runs the sources setup (trixie + opt-in
+forky/google/wine/vscode/firefox/virtualbox, written disabled) and asks which
+to enable. Flip later with `apt-sources`.
 
 ## Keybinds
 

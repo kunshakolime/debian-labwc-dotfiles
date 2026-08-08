@@ -66,6 +66,7 @@ ensure_video_group() {
 #               network-manager, network-manager-gnome, wlr-randr,
 #               gnome-disk-utility
 # Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP), curlftpfs (FTP)
+# whiptail: interactive checklist for apt-sources
 install_packages() {
     local pkgs=(
         labwc waybar fuzzel foot fonts-font-awesome swaybg
@@ -73,7 +74,7 @@ install_packages() {
         jq curl btop nnn vim tmux fastfetch
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
-        vlc loupe firefox-esr swappy cliphist
+        vlc loupe firefox-esr swappy cliphist whiptail
         davfs2 cifs-utils sshfs curlftpfs
     )
 
@@ -195,6 +196,29 @@ install_mount_net() {
     fi
 }
 
+# apt-sources (tool) must be installed before the sources setup runs, because
+# setup-sources.sh looks it up on PATH and then lets you pick repos to enable.
+install_apt_sources() {
+    echo "Installing apt-sources..."
+    if ! sudo curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/apt-sources/apt-sources.sh" -o /usr/local/bin/apt-sources \
+        || ! sudo chmod 755 /usr/local/bin/apt-sources; then
+        echo "warning: apt-sources install failed (network?) — skipping." >&2
+        return 1
+    fi
+    echo "apt-sources installed."
+
+    echo "Setting up apt sources..."
+    local tmp
+    tmp="$(mktemp)"
+    if ! sudo curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/sources/setup-sources.sh" -o "$tmp"; then
+        echo "warning: sources setup download failed (network?) — skipping." >&2
+        rm -f "$tmp"
+        return 1
+    fi
+    sudo bash "$tmp" || true
+    rm -f "$tmp"
+}
+
 # libadwaita apps (GNOME Disks, Loupe, ...) read the GSettings color-scheme
 # first; ~/.config/gtk-4.0/settings.ini is only a fallback. Set both.
 configure_dark_theme() {
@@ -288,6 +312,7 @@ finish() {
 # SETUP_TEST=1 loads the functions only (no side effects) so they can be tested.
 if [ "${SETUP_TEST:-0}" != "1" ]; then
     show_target
+    install_apt_sources
     install_packages
     install_nerd_font
     apply_configs
