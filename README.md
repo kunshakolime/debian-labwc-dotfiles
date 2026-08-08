@@ -23,13 +23,14 @@ One script, two modes:
 | `.config/gtk-4.0/` | GTK4 dark theme (Adwaita dark) |
 | `.config/mimeapps.list` | Default apps: Loupe for images |
 | `.local/share/applications/` | Custom desktop entries |
-| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper, mount-net) |
+| `.local/bin/` | Scripts (volume, brightness, kb-layout, resolution, nightlight, power, clipboard, wallpaper) |
 | `vendor/` | Offline assets: `fonts/` (JetBrainsMono Nerd Font) and `bluetui` binary |
 
 ## Install
 
-Everything except `apt` packages ships in the repo, so re-running setup needs no
-internet (fonts from `vendor/fonts/`, bluetui from `vendor/bluetui`).
+Everything except `apt` packages ships in the repo (offline-safe). `mount-net`
+and `nopasswd` are pulled from debian-13-tricks each run (skipped with a warning
+if offline).
 
 ### Bare metal
 
@@ -43,7 +44,7 @@ brightness keys). Running as root sets up `/root` instead. Reset with `uninstall
 
 ### Packages (bare metal)
 
-labwc, waybar, fuzzel, foot, swaybg, gammastep, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, bluetui, davfs2, cifs-utils, sshfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
+labwc, waybar, fuzzel, foot, swaybg, gammastep, dunst, cliphist, wl-clipboard, grim, slurp, swappy, jq, curl, btop, nnn, vim, tmux, fastfetch, pipewire, pipewire-pulse, libspa-0.2-bluetooth, wireplumber, pamixer, pulsemixer, playerctl, bluez, brightnessctl, network-manager, network-manager-gnome, gnome-disk-utility, loupe, zenity, bluetui, davfs2, cifs-utils, sshfs, curlftpfs, xdg-desktop-portal, xdg-desktop-portal-gtk, xdg-desktop-portal-wlr, vlc, firefox-esr, JetBrainsMono Nerd Font
 
 ## VPS
 
@@ -83,8 +84,7 @@ sudo systemctl enable --now zramswap  # default: /etc/default/zramswap ALGO=zstd
 /opt/labwc_dotfiles/uninstall-vps.sh
 ```
 
-Removes VNC, noVNC, headless env vars, and restores the default autostart
-(packages are kept).
+Removes VNC, noVNC, headless env vars, and restores the default autostart.
 
 ## Keybinds
 
@@ -112,13 +112,14 @@ Removes VNC, noVNC, headless env vars, and restores the default autostart
 - **Rotation**: off / every 10 min / 30 min / 1 hour
 - **Rotation set…**: ✓/✗ which wallpapers rotate (defaults to all)
 
-State in `~/.config/wallpaper.conf`. Rotation is a tiny `sleep` loop
-(`wallpaper-rotate`), no daemon.
+State in `~/.config/wallpaper.conf`; rotation is a `sleep` loop, no daemon.
 
-## Network mounts (WebDAV / SMB / SFTP)
+## Network mounts (WebDAV / FTP / SMB / SFTP)
 
-`mount-net` writes the systemd units and credentials for you — no config files.
-Shares live at `/mnt/<name>`.
+`mount-net` is a systemwide utility (installed by setup to `/usr/local/bin`,
+from [debian-13-tricks](https://github.com/kunshakolime/debian-13-tricks)). It
+writes the systemd units and credentials for you — no config files. Shares live
+at `/mnt/<name>`.
 
 ```bash
 mount-net add nas     # asks type, URL/server, login
@@ -129,7 +130,8 @@ mount-net mount nas   # mount now (or: umount, remove, list)
 ```
 
 Two modes: **auto** (default) and **keep** (always connected); flip anytime.
-SFTP uses key login (`ssh-copy-id` once). No daemons run while unmounted.
+SFTP uses key login (`ssh-copy-id` once); FTP passwords sit in the unit file
+(use SFTP if you need secrecy).
 
 ## Quick Share (packet)
 
@@ -137,7 +139,7 @@ Installed from a prebuilt `.deb`. Bluetooth on both sides, visibility "Everyone
 nearby".
 
 **Limitation:** fails when the *phone* hosts the hotspot (Android doesn't forward
-mDNS). Flip it — make the *laptop* the hotspot:
+mDNS). Make the *laptop* the hotspot instead:
 
 ```bash
 nmcli connection add type wifi ifname wlo1 con-name packet-ap mode ap \
@@ -168,13 +170,12 @@ nmcli connection up <phone-hotspot-name>
 - `widgets` — toggle which waybar widgets show (edits `modules-*`; fixed menu order, disabled widgets stay in place marked ✗; each toggle applies immediately and the menu re-highlights your last row; original slots restored via `.widgets-state`)
 - `bar` — toggle the whole waybar on/off (`Super+b`)
 - `menu <command>` — toggle any fuzzel-based menu (second press closes)
-- `mount-net` — add/remove/mount network shares (WebDAV, SMB, SFTP)
 
 ## Planned
 
 - **Screen locker + idle (swaylock + swayidle)** — `Super+L` to lock, autolock
-  on inactivity, DPMS screen-off. Nothing locks today; `swaylock` is already
-  wired into the power menu.
+  on inactivity, DPMS screen-off. `swaylock` is already wired into the power
+  menu.
 
 ## Image viewer
 

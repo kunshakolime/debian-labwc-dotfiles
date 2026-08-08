@@ -41,11 +41,13 @@ rm -f "$HOME/.local/bin/volume" \
       "$HOME/.local/bin/clipboard" \
       "$HOME/.local/bin/wallpaper" \
      "$HOME/.local/bin/wallpaper-rotate" \
-     "$HOME/.local/bin/mount-net" \
      "$HOME/.local/bin/term"
 rm -f "$HOME/.local/share/applications/"*.desktop
 rm -f "$HOME/.local/share/applications/desktop-only/"*.desktop 2>/dev/null
 rmdir "$HOME/.local/share/applications/desktop-only" 2>/dev/null || true
+
+echo "Removing systemwide tools..."
+sudo rm -f /usr/local/bin/mount-net
 
 echo "Reverting bashrc additions..."
 if [ -f "$HOME/.bashrc" ]; then
@@ -62,7 +64,8 @@ echo ""
 echo "Desktop setup removed."
 echo "  - processes: killed"
   echo "  - configs: deleted (~/.config/labwc, waybar, fuzzel, foot, dunst, gtk-*)"
-echo "  - scripts + .desktop entries: deleted"
+  echo "  - scripts + .desktop entries: deleted"
+  echo "  - systemwide tools: /usr/local/bin/mount-net removed"
 echo "  - bashrc: PATH export + nnn wrapper removed"
 echo "  - wallpapers: kept in ~/Pictures/Wallpapers"
 echo ""

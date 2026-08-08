@@ -65,7 +65,7 @@ ensure_video_group() {
 # Desktop-only: gammastep, ntfs-3g, bluez/libspa-0.2-bluetooth, brightnessctl,
 #               network-manager, network-manager-gnome, wlr-randr,
 #               gnome-disk-utility
-# Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP)
+# Network mounts (mount-net): davfs2 (WebDAV), cifs-utils (SMB), sshfs (SFTP), curlftpfs (FTP)
 install_packages() {
     local pkgs=(
         labwc waybar fuzzel foot fonts-font-awesome swaybg
@@ -74,7 +74,7 @@ install_packages() {
         pipewire pipewire-pulse wireplumber pamixer pulsemixer playerctl
         xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr lxpolkit
         vlc loupe firefox-esr swappy cliphist
-        davfs2 cifs-utils sshfs
+        davfs2 cifs-utils sshfs curlftpfs
     )
 
     if [ "$MODE" = "desktop" ]; then
@@ -129,7 +129,7 @@ apply_configs() {
         chmod +x "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/brightness" \
                  "$HOME/.local/bin/volume"    "$HOME/.local/bin/resolution" \
                  "$HOME/.local/bin/nightlight" "$HOME/.local/bin/wallpaper" \
-                 "$HOME/.local/bin/wallpaper-rotate" "$HOME/.local/bin/mount-net" \
+                 "$HOME/.local/bin/wallpaper-rotate" \
                  "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" \
                  "$HOME/.local/bin/bar" "$HOME/.local/bin/term"
         cp "$SCRIPT_DIR/.local/share/applications/desktop-only/"*.desktop "$HOME/.local/share/applications/"
@@ -139,12 +139,11 @@ apply_configs() {
         cp "$SCRIPT_DIR/.local/bin/resolution" "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/power"      "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/clipboard"  "$HOME/.local/bin/"
-        cp "$SCRIPT_DIR/.local/bin/mount-net"  "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/menu"       "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/control"    "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/widgets"    "$HOME/.local/bin/"
         cp "$SCRIPT_DIR/.local/bin/bar"        "$HOME/.local/bin/"
-        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard" "$HOME/.local/bin/mount-net" "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" "$HOME/.local/bin/bar"
+        chmod +x "$HOME/.local/bin/volume" "$HOME/.local/bin/kb-layout" "$HOME/.local/bin/resolution" "$HOME/.local/bin/power" "$HOME/.local/bin/clipboard" "$HOME/.local/bin/menu" "$HOME/.local/bin/control" "$HOME/.local/bin/widgets" "$HOME/.local/bin/bar"
     fi
 }
 
@@ -185,6 +184,15 @@ install_bluetui() {
     sudo cp "$SCRIPT_DIR/vendor/bluetui" "$bin"
     sudo chmod +x "$bin"
     echo "bluetui installed."
+}
+
+install_mount_net() {
+    if sudo curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/mount-net/mount-net" -o /usr/local/bin/mount-net \
+        && sudo chmod +x /usr/local/bin/mount-net; then
+        echo "mount-net installed."
+    else
+        echo "warning: mount-net install failed (network?) — skipping." >&2
+    fi
 }
 
 # libadwaita apps (GNOME Disks, Loupe, ...) read the GSettings color-scheme
@@ -274,7 +282,7 @@ finish() {
     echo ""
     echo "Reboot or run 'labwc' from tty1 to start your new desktop."
     echo "Press Super+Space to launch apps (fuzzel)."
-    echo "Network drives (WebDAV/SMB/SFTP): run 'mount-net add' once per share."
+    echo "Network drives (WebDAV/FTP/SMB/SFTP): run 'mount-net add' once per share."
 }
 
 # SETUP_TEST=1 loads the functions only (no side effects) so they can be tested.
@@ -287,6 +295,7 @@ if [ "${SETUP_TEST:-0}" != "1" ]; then
     setup_path_and_nnn
     bash "$SCRIPT_DIR/vendor/sshm-askpass/setup-sshm-askpass.sh" \
         || echo "warning: sshm-askpass setup skipped/failed." >&2
+    install_mount_net
     if sudo curl -fsSL "https://raw.githubusercontent.com/kunshakolime/debian-13-tricks/main/setups/nopasswd/nopasswd.sh" -o /usr/local/bin/nopasswd \
         && sudo chmod +x /usr/local/bin/nopasswd; then
         [ -f "/etc/sudoers.d/90-nopasswd-$USER" ] || /usr/local/bin/nopasswd
