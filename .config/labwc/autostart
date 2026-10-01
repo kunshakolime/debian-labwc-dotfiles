@@ -2,20 +2,31 @@
 
 # === What runs when labwc starts ===
 
-# foot --server — terminal daemon (makes footclient launches instant)
 foot --server &
-
-# swaybg — wallpaper
 swaybg --image "$HOME/Pictures/Wallpapers/debian-dark-wallpaper.png" --mode fill &
-
-# waybar — the top/bottom status bar
 waybar &
-
-# dunst — notification daemon (volume popups, battery alerts, etc.)
 dunst &
-
-# wlsunset — blue light filter at night (adjust lat/long for your location)
-wlsunset -l 52.5 -L 13.4 &
-
-# copyq — clipboard manager with history (runs in system tray)
 copyq --start-server &
+
+# VNC: wayvnc then noVNC websockify bridge
+# Only start if not already running, so a labwc restart can't double-bind
+# the ports (avoids "Address already in use").
+if ! pgrep -x wayvnc > /dev/null 2>&1; then
+  wayvnc 0.0.0.0 5900 &
+fi
+sleep 1
+if ! pgrep -f "websockify.*6080" > /dev/null 2>&1; then
+  websockify --web /usr/share/novnc 6080 localhost:5900 &
+fi
+
+# Audio: PipeWire stack (systemd user units are skipped as root via
+# ConditionUser=!root, so start the daemons directly).
+if ! pgrep -x pipewire > /dev/null 2>&1; then
+  pipewire &
+fi
+if ! pgrep -x wireplumber > /dev/null 2>&1; then
+  wireplumber &
+fi
+if ! pgrep -x pipewire-pulse > /dev/null 2>&1; then
+  pipewire-pulse &
+fi

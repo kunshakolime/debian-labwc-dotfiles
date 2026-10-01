@@ -4,7 +4,6 @@
     <gap>6</gap>
   </core>
 
-  <!-- Keyboard bindings -->
   <keyboard>
     <default />
 
@@ -17,7 +16,6 @@
     <keybind key="W-Return">
       <action name="Execute" command="footclient" />
     </keybind>
-
 
     <!-- Close window -->
     <keybind key="W-q">
@@ -60,14 +58,6 @@
       <action name="Execute" command="volume mute" />
     </keybind>
 
-    <!-- Brightness (2% steps) -->
-    <keybind key="XF86MonBrightnessUp">
-      <action name="Execute" command="brightness up" />
-    </keybind>
-    <keybind key="XF86MonBrightnessDown">
-      <action name="Execute" command="brightness down" />
-    </keybind>
-
     <!-- Media controls -->
     <keybind key="XF86AudioPlay">
       <action name="Execute" command="playerctl play-pause" />
@@ -80,10 +70,8 @@
     </keybind>
   </keyboard>
 
-  <!-- Window snapping/maximizing behavior -->
   <windowSnapMaxRange>10</windowSnapMaxRange>
 
-  <!-- Theme -->
   <theme>
     <name>Numix</name>
     <cornerRadius>6</cornerRadius>
